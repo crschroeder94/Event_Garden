@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.InputType;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -29,6 +30,7 @@ public class AddEvent extends AppCompatActivity {
     private Button time;
     private String date_string;
     private String time_string;
+    ArrayList<String> filters;
 
     private SimpleDateFormat dateFormatter;
 
@@ -53,6 +55,7 @@ public class AddEvent extends AppCompatActivity {
                 setTimeField();
             }
         });
+        filters = new ArrayList<String>();
 
 
 
@@ -70,10 +73,8 @@ public class AddEvent extends AppCompatActivity {
                 EditText country= (EditText) findViewById(R.id.country);
                 String location = address.getText().toString()+" "+city.getText().toString()+" "+country.getText().toString();
                 HashMap<String,Integer> temp = new HashMap<String, Integer>();
-                temp.put("trash bags",4);
-                ArrayList<String> str = new ArrayList<String>();
-                str.add("recreation");
-                Event event = new Event(name,date_string,time_string,description,location,temp,str);
+                temp.put("trash bags", 4);
+                Event event = new Event(name,date_string,time_string,description,location,temp,filters);
                 Intent i = new Intent();
                 i.putExtra("event", event);
                 setResult(RESULT_OK, i);
@@ -92,6 +93,31 @@ public class AddEvent extends AppCompatActivity {
         });
 
 
+    }
+
+    //INSIDE OF FILTERS
+    public void onCreateCheckboxClicked(View view) {
+        boolean checked = ((CheckBox) view).isChecked();
+
+        switch(view.getId()) {
+            case R.id.checkbox_rec:
+                if (checked) {
+                    filters.add("Recreation");
+                }
+                break;
+            case R.id.checkbox_arts:
+                if (checked) {
+                    filters.add("Arts");
+                }
+
+                break;
+            case R.id.checkbox_enviro:
+                if (checked) {
+                    filters.add("Environmental");
+                }
+                break;
+
+        }
     }
 
 //http://androidopentutorials.com/android-datepickerdialog-on-edittext-click-event/

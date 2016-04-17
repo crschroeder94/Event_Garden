@@ -22,7 +22,7 @@
         <EditText
             android:id = "@+id/name"
             android:layout_width="200dp"
-            android:layout_height="30dp"
+            android:layout_height="40dp"
             android:inputType="textAutoCorrect"/>
     </LinearLayout>
 
@@ -102,7 +102,7 @@
         <EditText
             android:layout_width="80dp"
             android:layout_height="40dp"
-            android:hint="Country"
+            android:hint="State"
             android:id="@+id/country"/>
     </LinearLayout>
     <LinearLayout
@@ -120,16 +120,21 @@
             android:layout_width="match_parent"
             android:layout_height="50dp">
 
-            <CheckBox android:id="@+id/checkbox_recreation"
+            <CheckBox android:id="@+id/checkbox_rec"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Recreation"
-                android:onClick="onCheckboxClicked"/>
-            <CheckBox android:id="@+id/checkbox_environmental"
+                android:onClick="onCreateCheckboxClicked"/>
+            <CheckBox android:id="@+id/checkbox_enviro"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Environmental"
-                android:onClick="onCheckboxClicked"/>
+                android:onClick="onCreateCheckboxClicked"/>
+            <CheckBox android:id="@+id/checkbox_arts"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Arts"
+                android:onClick="onCreateCheckboxClicked"/>
 
         </LinearLayout>
 

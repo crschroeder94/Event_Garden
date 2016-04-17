@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="300dp"
+    android:layout_height="400dp">
+
+    <LinearLayout
+        android:layout_width="300dp"
+        android:layout_height="30dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:text="Month"
+            android:textSize="20dp"/>
+        <TextView
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:text="Day"
+            android:textSize="20dp"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="300dp"
+        android:layout_height="50dp"
+        android:orientation="horizontal">
+    <EditText
+        android:layout_width="100dp"
+        android:layout_height="40dp"
+        android:id="@+id/month"
+        android:inputType="number"/>
+        <EditText
+            android:layout_width="100dp"
+            android:layout_height="40dp"
+            android:id="@+id/day"
+            android:inputType="number"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="300dp"
+        android:layout_height="50dp"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="100dp"
+            android:layout_height="30dp"
+            android:text="Radius"
+            android:textSize="20dp"/>
+        <EditText
+            android:layout_width="100dp"
+            android:layout_height="40dp"
+            android:inputType="number"
+            android:id="@+id/rad"
+            android:hint="10"/>
+        <TextView
+            android:layout_width="100dp"
+            android:layout_height="30dp"
+            android:text="miles"
+            android:textSize="20dp"/>
+
+        </LinearLayout>
+
+    <CheckBox android:id="@+id/checkbox_enviro"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="environmental"
+        android:textSize="20dp"
+        android:onClick="onFilterCheckboxClicked"/>
+    <CheckBox android:id="@+id/checkbox_rec"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="recreation"
+        android:textSize="20dp"
+        android:onClick="onFilterCheckboxClicked"/>
+    <CheckBox android:id="@+id/checkbox_arts"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="20dp"
+        android:text="Arts"
+        android:onClick="onFilterCheckboxClicked"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Save"
+            android:id="@+id/save"/>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cancel"
+            android:id="@+id/cancel"/>
+    </LinearLayout>
+
+
+</LinearLayout>

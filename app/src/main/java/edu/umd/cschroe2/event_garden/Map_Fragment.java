@@ -31,6 +31,12 @@ public class Map_Fragment extends Fragment{
     GoogleMap map;
 
     @Override
+    public void onCreate(Bundle saved){
+        super.onCreate(saved);
+        setRetainInstance(true);
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.map, container, false);
 

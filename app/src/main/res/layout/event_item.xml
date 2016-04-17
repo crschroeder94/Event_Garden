@@ -4,29 +4,94 @@
     android:layout_height="match_parent"
     android:id="@+id/event">
 
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:id="@+id/text"/>
+        android:layout_height="60dp"
+        android:id="@+id/layout"
+        android:orientation="vertical"
+        android:layout_marginLeft="100dp">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="80dp"
+        android:layout_height="30dp"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="50dp"
+            android:layout_height="30dp"
+            android:textSize="20dp"
+            android:id="@+id/text"
+        />
+
+        <TextView
+            android:layout_width="80dp"
+            android:layout_height="30dp"
+            android:textSize="20dp"
+            android:text="Attending"
+            android:layout_marginLeft="30dp"
+            android:textColor="@color/green"
+            android:id="@+id/attending_text"
+            android:visibility="gone"
+            />
+    </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="100dp"
+            android:layout_height="30dp"
+            android:orientation="horizontal"
+            >
+            <TextView
+                android:layout_width="40dp"
+                android:layout_height="30dp"
+                android:text = "hey"
+                android:textSize="20dp"
+                android:id="@+id/date"/>
+            <TextView
+                android:layout_width="40dp"
+                android:layout_height="30dp"
+                android:text = "hey"
+                android:textSize="20dp"
+                android:id="@+id/time"/>
+        </LinearLayout>
+
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
         android:id="@+id/hidden_layout"
-        android:layout_below="@+id/text"
+        android:layout_below="@+id/layout"
         android:orientation="vertical"
         android:visibility="gone"
+        android:layout_marginLeft="100dp"
         >
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:text = "hey"
+            android:id="@+id/address"/>
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="30dp"
             android:text = "hey"
             android:id="@+id/event_info"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:orientation="horizontal">
         <Button
             android:layout_width="90dp"
             android:layout_height="60dp"
             android:text="Attend"
             android:id="@+id/attend"/>
+        <Button
+            android:layout_width="90dp"
+            android:layout_height="60dp"
+            android:text="Collapse"
+            android:id="@+id/collapse"/>
+    </LinearLayout>
     </LinearLayout>
 
 </RelativeLayout>

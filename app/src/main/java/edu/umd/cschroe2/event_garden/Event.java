@@ -15,7 +15,8 @@ public class Event implements Serializable {
     String description;
     String location;
     HashMap<String, Integer> equipment;
-    ArrayList<String> categories;
+    ArrayList<String> filters;
+    boolean attending;
 
     public Event(String event_name_in, String date_in, String time_in, String descrip_in, String location_in,
                  HashMap<String,Integer> equip_in, ArrayList<String> cat_in){
@@ -25,6 +26,7 @@ public class Event implements Serializable {
         description = descrip_in;
         location = location_in;
         equipment = equip_in;
-        categories = cat_in;
+        filters = cat_in;
+        attending = false;
     }
 }

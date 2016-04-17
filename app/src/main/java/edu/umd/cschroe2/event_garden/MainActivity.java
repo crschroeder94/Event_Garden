@@ -1,6 +1,7 @@
 package edu.umd.cschroe2.event_garden;
 
 import android.app.ActionBar;
+import android.app.Dialog;
 import android.app.Fragment;
 import android.app.ListActivity;
 import android.app.ListFragment;
@@ -8,6 +9,10 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTabHost;
 import android.support.v7.app.AppCompatActivity;
@@ -17,6 +22,11 @@ import android.util.Base64;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.DatePicker;
+import android.widget.EditText;
+import android.widget.NumberPicker;
 import android.widget.TabHost;
 import android.widget.TabWidget;
 import com.google.android.gms.maps.GoogleMap;
@@ -24,16 +34,22 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public class MainActivity extends FragmentActivity {
 
     int ADD_EVENT_REQUEST=1;
     FragmentTabHost tabHost;
-    ArrayList<String> attending;
+    public ArrayList<String> attending;
+    Filter filter;
 
 
     @Override
@@ -42,6 +58,7 @@ public class MainActivity extends FragmentActivity {
         setContentView(R.layout.activity_main);
 
         attending = new ArrayList<String>();
+        filter=new Filter();
 
         //https://www.youtube.com/watch?v=QutovPrajXs
         tabHost = (FragmentTabHost) findViewById(R.id.tabhost);
@@ -62,7 +79,7 @@ public class MainActivity extends FragmentActivity {
             public void onTabChanged(String tabId) {
                 setTabColor();
             }
-        });
+        }); //try setting all the points up here
         setTabColor();
 
         //list_adapt = new List_Adapt(getApplicationContext());
@@ -72,7 +89,7 @@ public class MainActivity extends FragmentActivity {
         add_event.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this,AddEvent.class);
+                Intent intent = new Intent(MainActivity.this, AddEvent.class);
                 startActivityForResult(intent, ADD_EVENT_REQUEST);
             }
         });
@@ -80,11 +97,72 @@ public class MainActivity extends FragmentActivity {
         android.support.design.widget.FloatingActionButton filters =
                 (android.support.design.widget.FloatingActionButton)findViewById(R.id.filters);
         filters.setOnClickListener(new View.OnClickListener() {
+            public void onFilterCheckboxClicked(View view) {
+                boolean checked = ((CheckBox) view).isChecked();
+
+                switch(view.getId()) {
+                    case R.id.checkbox_rec:
+                        if (checked) {
+                            filter.addFilter("Recreation");
+                        }
+                        break;
+                    case R.id.checkbox_arts:
+                        if (checked) {
+                            filter.addFilter("Arts");
+                        }
+
+                        break;
+                    case R.id.checkbox_enviro:
+                        if (checked) {
+                            filter.addFilter("Environmental");
+                        }
+                        break;
+
+                }
+            }
             @Override
             public void onClick(View v) {
+                final Dialog dialog = new Dialog(MainActivity.this);
+                dialog.setContentView(R.layout.filter_dialog);
+                dialog.setTitle("Set Filters");
+                dialog.setCancelable(true);
+                Calendar calendar = Calendar.getInstance();
+                int d = calendar.get(Calendar.DAY_OF_MONTH);
+                int m = calendar.get(Calendar.MONTH);
+                String mon = "" + m;
+                String da = "" + d;
+                final EditText month = (EditText) dialog.findViewById(R.id.month);
+                month.setHint(mon);
+                final EditText day = (EditText) dialog.findViewById(R.id.day);
+                day.setHint(da);
+                final EditText radius = (EditText) dialog.findViewById(R.id.rad);
+                dialog.show();
+                Button saveButton = (Button) dialog.findViewById(R.id.save);
+                saveButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        filter.setRadius(radius.getText().toString());
+                        filter.setDate(month.getText().toString() + "-" + day.getText().toString() + "-2016");
+                        //List_Fragment list = (List_Fragment) getSupportFragmentManager().findFragmentByTag("tab1");
+                        //list.applyFilters(filter);
+                        finish();
+                    }
 
+
+
+
+                });
+
+                Button cancel = (Button) dialog.findViewById(R.id.cancel);
+                cancel.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        finish();
+                    }
+                });
             }
         });
+
 
         android.support.design.widget.FloatingActionButton profile =
                 (android.support.design.widget.FloatingActionButton)findViewById(R.id.profile);
@@ -105,6 +183,42 @@ public class MainActivity extends FragmentActivity {
             }
         });
 
+    }
+
+    //INSIDE OF FILTERS
+    /*public void onFilterCheckboxClicked(View view) {
+        boolean checked = ((CheckBox) view).isChecked();
+
+        switch(view.getId()) {
+            case R.id.checkbox_rec:
+                if (checked) {
+                    filter.addFilter("Recreation");
+                }
+                break;
+            case R.id.checkbox_arts:
+                if (checked) {
+                    filter.addFilter("Arts");
+                }
+
+                    break;
+            case R.id.checkbox_enviro:
+                if (checked) {
+                    filter.addFilter("Environmental");
+                }
+                    break;
+
+        }
+    }*/
+
+    public static Drawable drawableFromUrl(String url) throws IOException {
+        Bitmap x;
+
+        HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
+        connection.connect();
+        InputStream input = connection.getInputStream();
+
+        x = BitmapFactory.decodeStream(input);
+        return new BitmapDrawable(x);
     }
 
     //Change The Backgournd Color of Tabs
@@ -128,14 +242,18 @@ public class MainActivity extends FragmentActivity {
             //add event object to adapter
             Event event = (Event) i.getSerializableExtra("event");
             String curr_tab_tag = tabHost.getCurrentTabTag();
-            Log.i("current tab tag",curr_tab_tag);
+            //Log.i("current tab tag",curr_tab_tag);
             //List_Fragment f = (List_Fragment) getSupportFragmentManager().findFragmentByTag(curr_tab_tag);
             //f.addtoAdapt(event);
             List_Fragment list =(List_Fragment)getSupportFragmentManager().findFragmentByTag("tab1");
             Map_Fragment map =(Map_Fragment)getSupportFragmentManager().findFragmentByTag("tab2");
-            map.addMarker(event);
+            if(map != null){
+                map.addMarker(event);
+            }else{
+
+            }
             list.addtoAdapt(event);
-//TO DO these both do not save
+
 
         }
     }

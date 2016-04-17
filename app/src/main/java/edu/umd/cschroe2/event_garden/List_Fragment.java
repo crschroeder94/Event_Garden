@@ -14,6 +14,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -23,7 +24,17 @@ import java.util.HashMap;
 public class List_Fragment extends ListFragment {
 
     List_Adapt list_adapt;
+    List_Adapt filtered;
     LinearLayout layout;
+
+    @Override
+    public void onCreate(Bundle saved){
+        super.onCreate(saved);
+        list_adapt = new List_Adapt(getActivity().getApplicationContext());
+        ArrayList<String> temp = new ArrayList<String>();
+        temp.add("Recreation");
+        list_adapt.add(new Event("Event 1", "04-20-2016", "16:00", "description", "location", new HashMap<String, Integer>(), temp));
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -36,18 +47,21 @@ public class List_Fragment extends ListFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        list_adapt = new List_Adapt(getActivity().getApplicationContext());
-        getListView().setAdapter(list_adapt);
+            getListView().setFastScrollEnabled(true);
+            getListView().setAdapter(list_adapt);
+            setupClickable();
+    }
+
+    public void setupClickable(){
         getListView().setClickable(true);
-        list_adapt.add(new Event("Event 1", "date", "time", "description", "location", new HashMap<String, Integer>(),new ArrayList<String>()));
         getListView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
                 layout = (LinearLayout) view.findViewById(R.id.hidden_layout);
-                if(layout.getVisibility()==View.GONE) {
+                if (layout.getVisibility() == View.GONE) {
                     layout.setVisibility(View.VISIBLE);
-                }else if(layout.getVisibility() == View.VISIBLE){
+                } else if (layout.getVisibility() == View.VISIBLE) {
                     layout.setVisibility(View.GONE);
                 }
 
@@ -56,7 +70,21 @@ public class List_Fragment extends ListFragment {
     }
 
     public void addtoAdapt(Event a){
-        list_adapt.add(a);
+
+        list_adapt.sorted_add(a);
+    }
+
+    public void applyFilters(Filter f){
+        filtered = new List_Adapt(getActivity().getApplicationContext());
+        getListView().setFastScrollEnabled(true);
+        getListView().setAdapter(filtered);
+        setupClickable();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        //outState.putSerializable("list_adapter",(Serializable) );
     }
 
 
