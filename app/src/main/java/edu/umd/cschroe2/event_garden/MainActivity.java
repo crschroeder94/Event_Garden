@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.app.Fragment;
 import android.app.ListActivity;
 import android.app.ListFragment;
+import android.app.Notification;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -44,7 +45,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-public class MainActivity extends FragmentActivity {
+public class MainActivity extends AppCompatActivity {
 
     int ADD_EVENT_REQUEST=1;
     FragmentTabHost tabHost;
@@ -97,29 +98,7 @@ public class MainActivity extends FragmentActivity {
         android.support.design.widget.FloatingActionButton filters =
                 (android.support.design.widget.FloatingActionButton)findViewById(R.id.filters);
         filters.setOnClickListener(new View.OnClickListener() {
-            public void onFilterCheckboxClicked(View view) {
-                boolean checked = ((CheckBox) view).isChecked();
 
-                switch(view.getId()) {
-                    case R.id.checkbox_rec:
-                        if (checked) {
-                            filter.addFilter("Recreation");
-                        }
-                        break;
-                    case R.id.checkbox_arts:
-                        if (checked) {
-                            filter.addFilter("Arts");
-                        }
-
-                        break;
-                    case R.id.checkbox_enviro:
-                        if (checked) {
-                            filter.addFilter("Environmental");
-                        }
-                        break;
-
-                }
-            }
             @Override
             public void onClick(View v) {
                 final Dialog dialog = new Dialog(MainActivity.this);
@@ -132,10 +111,18 @@ public class MainActivity extends FragmentActivity {
                 String mon = "" + m;
                 String da = "" + d;
                 final EditText month = (EditText) dialog.findViewById(R.id.month);
-                month.setHint(mon);
+                month.setText(mon);
                 final EditText day = (EditText) dialog.findViewById(R.id.day);
-                day.setHint(da);
+                day.setText(da);
                 final EditText radius = (EditText) dialog.findViewById(R.id.rad);
+
+                CheckBox enviro = (CheckBox) dialog.findViewById(R.id.checkbox_enviro);
+                CheckBox rec = (CheckBox) dialog.findViewById(R.id.checkbox_rec);
+                CheckBox arts = (CheckBox) dialog.findViewById(R.id.checkbox_arts);
+                enviro.setChecked(filter.filter_categories.get("Environmental"));
+                rec.setChecked(filter.filter_categories.get("Recreation"));
+                arts.setChecked(filter.filter_categories.get("Arts"));
+
                 dialog.show();
                 Button saveButton = (Button) dialog.findViewById(R.id.save);
                 saveButton.setOnClickListener(new View.OnClickListener() {
@@ -143,9 +130,11 @@ public class MainActivity extends FragmentActivity {
                     public void onClick(View v) {
                         filter.setRadius(radius.getText().toString());
                         filter.setDate(month.getText().toString() + "-" + day.getText().toString() + "-2016");
-                        //List_Fragment list = (List_Fragment) getSupportFragmentManager().findFragmentByTag("tab1");
-                        //list.applyFilters(filter);
-                        finish();
+                        filter_checkboxes(dialog);
+
+                        List_Fragment list = (List_Fragment) getSupportFragmentManager().findFragmentByTag("tab1");
+                        list.applyFilters(filter);
+                        dialog.dismiss();
                     }
 
 
@@ -157,7 +146,7 @@ public class MainActivity extends FragmentActivity {
                 cancel.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        finish();
+                        dialog.dismiss();
                     }
                 });
             }
@@ -183,6 +172,29 @@ public class MainActivity extends FragmentActivity {
             }
         });
 
+    }
+
+    public void filter_checkboxes( Dialog dialog){
+        CheckBox enviro = (CheckBox) dialog.findViewById(R.id.checkbox_enviro);
+        CheckBox rec = (CheckBox) dialog.findViewById(R.id.checkbox_rec);
+        CheckBox arts = (CheckBox) dialog.findViewById(R.id.checkbox_arts);
+        if(enviro.isChecked()){
+            filter.filter_categories.put("Environmental",true);
+        }else{
+            filter.filter_categories.put("Environmental",false);
+        }
+
+        if(rec.isChecked()){
+            filter.filter_categories.put("Recreation",true);
+        }else{
+            filter.filter_categories.put("Recreation",false);
+        }
+
+        if(arts.isChecked()){
+            filter.filter_categories.put("Arts", true);
+        }else{
+            filter.filter_categories.put("Arts", false);
+        }
     }
 
     //INSIDE OF FILTERS

@@ -78,6 +78,7 @@ public class List_Fragment extends ListFragment {
         filtered = new List_Adapt(getActivity().getApplicationContext());
         getListView().setFastScrollEnabled(true);
         getListView().setAdapter(filtered);
+        filtered.filterEvents(f, list_adapt);
         setupClickable();
     }
 

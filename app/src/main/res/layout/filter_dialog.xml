@@ -50,7 +50,7 @@
             android:layout_height="40dp"
             android:inputType="number"
             android:id="@+id/rad"
-            android:hint="10"/>
+            android:text="10"/>
         <TextView
             android:layout_width="100dp"
             android:layout_height="30dp"
@@ -64,19 +64,22 @@
         android:layout_height="wrap_content"
         android:text="environmental"
         android:textSize="20dp"
-        android:onClick="onFilterCheckboxClicked"/>
+        android:checked="true"
+        />
     <CheckBox android:id="@+id/checkbox_rec"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="recreation"
         android:textSize="20dp"
-        android:onClick="onFilterCheckboxClicked"/>
+        android:checked="true"
+        />
     <CheckBox android:id="@+id/checkbox_arts"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="20dp"
         android:text="Arts"
-        android:onClick="onFilterCheckboxClicked"/>
+        android:checked="true"
+        />
 
     <LinearLayout
         android:layout_width="match_parent"

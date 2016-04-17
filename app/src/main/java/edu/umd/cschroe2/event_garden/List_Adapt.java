@@ -17,6 +17,7 @@ import android.widget.Toast;
 import org.w3c.dom.Text;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -26,7 +27,7 @@ public class List_Adapt extends BaseAdapter {
 
     private final Context mContext;
     private final List<Event> temp = new ArrayList<Event>();
-    private final List<Event> filtered = new ArrayList<Event>();
+    //private final List<Event> filtered = new ArrayList<Event>();
 
 
 
@@ -89,6 +90,25 @@ public class List_Adapt extends BaseAdapter {
 
         return pos;
 
+    }
+
+    public void filterEvents(Filter f, List_Adapt unfiltered){
+            for(String category : f.filter_categories.keySet()){
+                if(f.filter_categories.get(category) == true) { //check if category is checked
+                    for (Object a : unfiltered.getArr()) {
+                        Event curr = (Event) a;
+                        if (curr.filters.contains(category)) { //check if filter in list of filters
+                            if (!temp.contains(curr)) {
+                                sorted_add(curr);
+                            }
+                        }
+                    }
+                }
+            }
+    }
+
+    public List getArr(){
+        return temp;
     }
 
 

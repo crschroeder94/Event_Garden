@@ -29,4 +29,13 @@ public class Event implements Serializable {
         filters = cat_in;
         attending = false;
     }
+
+    public boolean hasFilter(String filter){
+        for(String i : filters){
+            if(i.equals(filter)){
+                return true;
+            }
+        }
+        return false;
+    }
 }
