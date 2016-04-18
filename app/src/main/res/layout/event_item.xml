@@ -17,6 +17,7 @@
         android:layout_height="30dp"
         android:orientation="horizontal">
         <TextView
+            style="@style/EventViewTextStyle"
             android:layout_width="50dp"
             android:layout_height="30dp"
             android:textSize="20dp"
@@ -41,12 +42,14 @@
             android:orientation="horizontal"
             >
             <TextView
+                style="@style/EventViewTextStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="30dp"
                 android:text = "hey"
                 android:textSize="20dp"
                 android:id="@+id/date"/>
             <TextView
+                style="@style/EventViewTextStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="30dp"
                 android:text = "hey"
@@ -68,12 +71,14 @@
         >
 
         <TextView
+            style="@style/EventViewTextStyle"
             android:layout_width="match_parent"
             android:layout_height="30dp"
             android:text = "hey"
             android:id="@+id/address"/>
 
         <TextView
+            style="@style/EventViewTextStyle"
             android:layout_width="match_parent"
             android:layout_height="30dp"
             android:text = "hey"
@@ -84,12 +89,12 @@
         android:layout_height="60dp"
         android:orientation="horizontal">
         <Button
-            android:layout_width="90dp"
+            android:layout_width="100dp"
             android:layout_height="60dp"
             android:text="Attend"
-            android:id="@+id/attend"/>
+            android:id="@+id/attend" />
         <Button
-            android:layout_width="90dp"
+            android:layout_width="100dp"
             android:layout_height="60dp"
             android:text="Collapse"
             android:id="@+id/collapse"/>
