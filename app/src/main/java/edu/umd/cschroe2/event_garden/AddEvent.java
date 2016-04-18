@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.InputType;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -68,13 +69,16 @@ public class AddEvent extends AppCompatActivity {
                 //http://stackoverflow.com/questions/6304463/how-to-create-edittext-more-than-one-line-in-android
                 EditText descript = (EditText) findViewById(R.id.description);
                 String description = descript.getText().toString();
-                EditText address= (EditText) findViewById(R.id.address);
-                EditText city= (EditText) findViewById(R.id.city);
-                EditText country= (EditText) findViewById(R.id.country);
-                String location = address.getText().toString()+" "+city.getText().toString()+" "+country.getText().toString();
-                HashMap<String,Integer> temp = new HashMap<String, Integer>();
-                temp.put("trash bags", 4);
-                Event event = new Event(name,date_string,time_string,description,location,temp,filters);
+                EditText address = (EditText) findViewById(R.id.address);
+                EditText city = (EditText) findViewById(R.id.city);
+                EditText state = (EditText) findViewById(R.id.state);
+
+                //EditText equip1= (EditText) findViewById(R.id.equip_1);
+                //Log.i("equip1 value", equip1.getText().toString());
+
+                String location = address.getText().toString() + " " + city.getText().toString() + " " + state.getText().toString();
+                HashMap<String, Integer> hash = equipmentAdding(v);
+                Event event = new Event(name, date_string, time_string, description, location, hash, filters);
                 Intent i = new Intent();
                 i.putExtra("event", event);
                 setResult(RESULT_OK, i);
@@ -93,6 +97,28 @@ public class AddEvent extends AppCompatActivity {
         });
 
 
+    }
+
+    public HashMap<String,Integer> equipmentAdding(View v){
+        HashMap<String,Integer> temp = new HashMap<String,Integer>();
+        EditText equip1= (EditText) findViewById(R.id.equip_1);
+        EditText equip1_quant= (EditText) findViewById(R.id.equip_1_quant);
+        EditText equip2= (EditText) findViewById(R.id.equip_2);
+        EditText equip2_quant= (EditText) findViewById(R.id.equip_2_quant);
+        EditText equip3= (EditText) findViewById(R.id.equip_3);
+        EditText equip3_quant= (EditText) findViewById(R.id.equip_3_quant);
+        if(!equip1.getText().toString().equals("") && !equip1_quant.getText().toString().equals("")) {
+            temp.put(equip1.getText().toString(), Integer.parseInt(equip1_quant.getText().toString()));
+        }
+        if(!equip2.getText().toString().equals("") && !equip2_quant.getText().toString().equals("")) {
+            temp.put(equip2.getText().toString(), Integer.parseInt(equip2_quant.getText().toString()));
+        }
+        if(!equip3.getText().toString().equals("") && !equip3_quant.getText().toString().equals("")) {
+            temp.put(equip3.getText().toString(), Integer.parseInt(equip3_quant.getText().toString()));
+        }
+
+
+        return temp;
     }
 
     //INSIDE OF FILTERS

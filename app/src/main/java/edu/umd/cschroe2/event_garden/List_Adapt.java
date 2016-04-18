@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import org.w3c.dom.Text;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -123,11 +124,15 @@ public class List_Adapt extends BaseAdapter {
         TextView info = (TextView) itemLayout.findViewById(R.id.event_info);
         info.setText(event.description);
         TextView date = (TextView) itemLayout.findViewById(R.id.date);
-        date.setText(event.date);
+        String pretty_date = prettifyDate(event.date);
+        date.setText(pretty_date);
         TextView time = (TextView) itemLayout.findViewById(R.id.time);
         time.setText(event.time);
         TextView address = (TextView) itemLayout.findViewById(R.id.address);
         address.setText(event.location);
+
+        TextView equip = (TextView) itemLayout.findViewById(R.id.equip);
+        addEquipText(equip, event);
 
         Button attend = (Button) itemLayout.findViewById(R.id.attend);
         attend.setOnClickListener(new View.OnClickListener() {
@@ -149,6 +154,25 @@ public class List_Adapt extends BaseAdapter {
         });
         return itemLayout;
 
+    }
+
+    public void addEquipText(TextView equip ,Event e){
+        String total = "";
+        for(String name: e.equipment.keySet()){
+            Log.i("equipment name", " "+name);
+            total += name+"-"+e.equipment.get(name)+"\n";
+        }
+        Log.i("equipment string", " "+total);
+        equip.setText(total);
+    }
+
+    public String prettifyDate(String old){ //old date in format xx-xx-xxxx
+        String pretty = "";
+        String[] months = mContext.getResources().getStringArray(R.array.months);
+        String[] arr = old.split("-");
+        pretty+=months[Integer.parseInt(arr[0]) - 1];
+        pretty+=" " + Integer.parseInt(arr[1]);
+        return pretty;
     }
 
     @Override

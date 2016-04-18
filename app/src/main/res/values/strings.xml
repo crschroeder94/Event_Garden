@@ -1,4 +1,18 @@
 <resources>
     <string name="app_name">Event_Garden</string>
     <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">AIzaSyC7sj7Yifz4JxVVk3F6gVMmxfLkIin8mjo</string>
+    <string-array name="months">
+        <item>Jan</item>
+        <item>Feb</item>
+        <item>Mar</item>
+        <item>Apr</item>
+        <item>May</item>
+        <item>June</item>
+        <item>July</item>
+        <item>Sept</item>
+        <item>Oct</item>
+        <item>Nov</item>
+        <item>Dec</item>
+    </string-array>
+
 </resources>

@@ -259,10 +259,8 @@ public class MainActivity extends AppCompatActivity {
             //f.addtoAdapt(event);
             List_Fragment list =(List_Fragment)getSupportFragmentManager().findFragmentByTag("tab1");
             Map_Fragment map =(Map_Fragment)getSupportFragmentManager().findFragmentByTag("tab2");
-            if(map != null){
+            if(map != null){ //add markers to array?
                 map.addMarker(event);
-            }else{
-
             }
             list.addtoAdapt(event);
 

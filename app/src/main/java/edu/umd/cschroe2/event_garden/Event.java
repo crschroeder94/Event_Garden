@@ -10,8 +10,8 @@ import java.util.HashMap;
 public class Event implements Serializable {
 
     String event_name;
-    String date;
-    String time;
+    String date; //date in format xx-xx-xxxx
+    String time; //time in military time xx:xx
     String description;
     String location;
     HashMap<String, Integer> equipment;

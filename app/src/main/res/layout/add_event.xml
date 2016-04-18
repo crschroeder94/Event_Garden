@@ -103,7 +103,7 @@
             android:layout_width="80dp"
             android:layout_height="40dp"
             android:hint="State"
-            android:id="@+id/country"/>
+            android:id="@+id/state"/>
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
@@ -135,6 +135,71 @@
                 android:layout_height="wrap_content"
                 android:text="Arts"
                 android:onClick="onCreateCheckboxClicked"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Add Equipment"/>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <EditText
+                    android:layout_width="150dp"
+                    android:layout_height="40dp"
+                    android:hint="Item"
+                    android:id="@+id/equip_1"/>
+                <EditText
+                    android:layout_width="80dp"
+                    android:layout_height="40dp"
+                    android:hint="Quantity"
+                    android:inputType="number"
+                    android:id="@+id/equip_1_quant"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <EditText
+                    android:layout_width="150dp"
+                    android:layout_height="40dp"
+                    android:hint="Item"
+                    android:id="@+id/equip_2"/>
+                <EditText
+                    android:layout_width="80dp"
+                    android:layout_height="40dp"
+                    android:hint="Quantity"
+                    android:inputType="number"
+                    android:id="@+id/equip_2_quant"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <EditText
+                    android:layout_width="150dp"
+                    android:layout_height="40dp"
+                    android:hint="Item"
+                    android:id="@+id/equip_3"/>
+                <EditText
+                    android:layout_width="80dp"
+                    android:layout_height="40dp"
+                    android:hint="Quantity"
+                    android:inputType="number"
+                    android:id="@+id/equip_3_quant"/>
+            </LinearLayout>
+
+
 
         </LinearLayout>
 

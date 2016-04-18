@@ -33,7 +33,7 @@ public class List_Fragment extends ListFragment {
         list_adapt = new List_Adapt(getActivity().getApplicationContext());
         ArrayList<String> temp = new ArrayList<String>();
         temp.add("Recreation");
-        list_adapt.add(new Event("Event 1", "04-20-2016", "16:00", "description", "location", new HashMap<String, Integer>(), temp));
+        list_adapt.add(new Event("Event 1", "04-20-2016", "5:30 PM", "description", "location", new HashMap<String, Integer>(), temp));
     }
 
     @Override
