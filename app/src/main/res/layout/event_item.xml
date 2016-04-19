@@ -18,7 +18,7 @@
         android:orientation="horizontal">
         <TextView
             style="@style/EventViewTextStyle"
-            android:layout_width="50dp"
+            android:layout_width="230dp"
             android:layout_height="30dp"
             android:textSize="20dp"
             android:id="@+id/text"
@@ -47,7 +47,7 @@
                 style="@style/EventViewTextStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="30dp"
-                android:text = "hey"
+                android:text = "[Date]"
                 android:textSize="20dp"
                 android:textColor="@color/dark_blue"
                 android:id="@+id/date"/>
@@ -55,7 +55,7 @@
                 style="@style/EventViewTextStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="30dp"
-                android:text = "hey"
+                android:text = "[Time]"
                 android:textColor="@color/dark_blue"
                 android:textSize="20dp"
                 android:layout_marginLeft="10dp"
@@ -78,7 +78,7 @@
             style="@style/EventViewTextStyle"
             android:layout_width="match_parent"
             android:layout_height="30dp"
-            android:text = "hey"
+            android:text = "[Address]"
             android:textColor="@color/dark_blue"
             android:id="@+id/address"/>
 
@@ -86,7 +86,7 @@
             style="@style/EventViewTextStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text = "hey"
+            android:text = "[Description]"
             android:textColor="@color/dark_blue"
             android:id="@+id/event_info"/>
 
