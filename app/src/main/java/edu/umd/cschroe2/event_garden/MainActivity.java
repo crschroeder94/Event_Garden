@@ -30,6 +30,8 @@ import android.widget.EditText;
 import android.widget.NumberPicker;
 import android.widget.TabHost;
 import android.widget.TabWidget;
+import android.widget.Toast;
+
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -52,11 +54,14 @@ public class MainActivity extends AppCompatActivity {
     public ArrayList<String> attending;
     Filter filter;
 
+    DatabaseHelper eventGardenDatabase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        eventGardenDatabase = new DatabaseHelper(this);
 
         attending = new ArrayList<String>();
         filter=new Filter();
@@ -253,6 +258,16 @@ public class MainActivity extends AppCompatActivity {
         if(requestCode == ADD_EVENT_REQUEST && resultCode == RESULT_OK){
             //add event object to adapter
             Event event = (Event) i.getSerializableExtra("event");
+            if (eventGardenDatabase.insertEvent(event) == false){
+                Toast.makeText(MainActivity.this, "Unable to access Sqlite database.", Toast.LENGTH_SHORT).show();
+            }
+
+            // Todo This is a debug statement for the sql database.
+            for (Event e : eventGardenDatabase.getAllEvents()){
+                Log.d("EVENT", e.event_name);
+            }
+            // Todo End debug stuff.
+
             String curr_tab_tag = tabHost.getCurrentTabTag();
             //Log.i("current tab tag",curr_tab_tag);
             //List_Fragment f = (List_Fragment) getSupportFragmentManager().findFragmentByTag(curr_tab_tag);
