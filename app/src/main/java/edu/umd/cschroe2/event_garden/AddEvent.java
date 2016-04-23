@@ -4,6 +4,8 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.InputType;
@@ -15,11 +17,15 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
+import java.io.IOException;
+import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -32,6 +38,7 @@ public class AddEvent extends AppCompatActivity {
     private String date_string;
     private String time_string;
     ArrayList<String> filters;
+    Geocoder coder;
 
     private SimpleDateFormat dateFormatter;
 
@@ -70,19 +77,21 @@ public class AddEvent extends AppCompatActivity {
                 EditText descript = (EditText) findViewById(R.id.description);
                 String description = descript.getText().toString();
                 EditText address = (EditText) findViewById(R.id.address);
-                EditText city = (EditText) findViewById(R.id.city);
-                EditText state = (EditText) findViewById(R.id.state);
+                TextView errors = (TextView) findViewById(R.id.errors);
 
-                //EditText equip1= (EditText) findViewById(R.id.equip_1);
-                //Log.i("equip1 value", equip1.getText().toString());
-
-                String location = address.getText().toString() + " " + city.getText().toString() + " " + state.getText().toString();
-                HashMap<String, Integer> hash = equipmentAdding(v);
-                Event event = new Event(name, date_string, time_string, description, location, hash, filters);
-                Intent i = new Intent();
-                i.putExtra("event", event);
-                setResult(RESULT_OK, i);
-                finish();
+                String location = address.getText().toString();
+                String temp = validateData(name,date_string,location,filters,time_string);
+                if(temp.equals("")) {
+                    HashMap<String, Integer> hash = equipmentAdding(v);
+                    Event event = new Event(name, date_string, time_string, description, location, hash, filters);
+                    Intent i = new Intent();
+                    i.putExtra("event", event);
+                    setResult(RESULT_OK, i);
+                    finish();
+                }else{
+                    errors.setText(temp);
+                    errors.setVisibility(View.VISIBLE);
+                }
             }
         });
 
@@ -97,6 +106,56 @@ public class AddEvent extends AppCompatActivity {
         });
 
 
+    }
+
+    public String validateData(String name,String date_string,String location,ArrayList filters,String time){
+        String errors = "";
+        if(name.equals("")){
+            errors += "-No Event Name entered\n";
+        }
+        if(date_string == null){
+            errors += "-Date Not Entered\n";
+        }else {
+            String[] date_arr = date_string.split("-");
+            Calendar c = Calendar.getInstance();
+            int month = c.get(Calendar.MONTH);
+            int day = c.get(Calendar.DAY_OF_MONTH);
+            Log.i("Month check","date arr month: "+Integer.parseInt(date_arr[0])+"actual month: "+(month+1));
+            Log.i("day check","date arr day: "+Integer.parseInt(date_arr[1])+"actual month: "+day);
+            if(Integer.parseInt(date_arr[0]) < (month+1)){
+                errors += "-Date Invalid\n";
+            }else if(Integer.parseInt(date_arr[0]) == (month+1) && Integer.parseInt(date_arr[1]) < day){
+                errors += "-Date Invalid\n";
+            }
+        }
+        if(filters.isEmpty()){
+            errors += "-No filters entered\n";
+        }
+        if(time_string==null){
+            errors += "-No time entered\n";
+        }
+
+        errors+=validateLocation(location);
+        return errors;
+    }
+
+    public String validateLocation(String location){
+        String temp = "";
+        try {
+            if(!location.equals("")){
+                List<Address> possibleAddresses = coder.getFromLocationName(location, 1);
+
+                if (possibleAddresses.isEmpty()) {
+                    temp+="-Could not find address\n";
+                }
+            }else{
+                temp+="-No Address Entered\n";
+            }
+
+        }catch(IOException e){
+            Toast.makeText(getApplicationContext(),"Could not lookup address. Does this app have internet access?",Toast.LENGTH_LONG).show();
+        }
+        return temp;
     }
 
     public HashMap<String,Integer> equipmentAdding(View v){

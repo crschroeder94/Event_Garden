@@ -1,7 +1,14 @@
 package edu.umd.cschroe2.event_garden;
 
+import android.content.Context;
+import android.content.Intent;
 import android.location.Address;
+import android.location.Criteria;
 import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.provider.Settings;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -20,6 +27,7 @@ import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
@@ -62,8 +70,10 @@ public class Map_Fragment extends Fragment{
 
         // Gets to GoogleMap from the MapView and does initialization stuff
         map = mapView.getMap();
+        UiSettings u = map.getUiSettings();
+        u.setZoomControlsEnabled(false);
         //map.getUiSettings().setMyLocationButtonEnabled(false);
-        //map.setMyLocationEnabled(true);
+        map.setMyLocationEnabled(true);
         for (EventMarker eventMarker : eventMarkers){
             map.addMarker(eventMarker.markerOptions);
         }
@@ -71,10 +81,65 @@ public class Map_Fragment extends Fragment{
         // Needs to call MapsInitializer before doing any CameraUpdateFactory calls
         try {
             MapsInitializer.initialize(this.getActivity());
+
         } catch (GooglePlayServicesNotAvailableException e) {
             e.printStackTrace();
         }
+//http://stackoverflow.com/questions/24320989/locationmanager-locationmanager-this-getsystemservicecontext-location-servi
+        // Acquire a reference to the system Location Manager
+        final LocationManager locationManager = (LocationManager)getContext().getSystemService(Context.LOCATION_SERVICE);
+        // Define a listener that responds to location updates
+        LocationListener locationListener = new LocationListener() {
+            public void onLocationChanged(Location location) {
+                // Called when a new location is found by the network location provider.
+                CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 10);
+                map.animateCamera(cameraUpdate);
+            }
 
+            public void onStatusChanged(String provider, int status, Bundle extras) {}
+
+            public void onProviderEnabled(String provider) {
+                //Log.i("provider enabled","provider is enabled");
+                try{
+                    locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
+                }catch(SecurityException e){
+                    e.printStackTrace();
+                }
+            }
+
+            public void onProviderDisabled(String provider) {
+                //Log.i("Please turn on GPS","Please turn on GPS");
+                Toast.makeText(getContext(), "Please turn on GPS", Toast.LENGTH_LONG).show();
+                Intent myIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                startActivity(myIntent);
+            }
+        };
+
+        /*Criteria locationCritera = new Criteria();
+        locationCritera.setAccuracy(Criteria.ACCURACY_COARSE);
+        locationCritera.setAltitudeRequired(false);
+        locationCritera.setBearingRequired(false);
+        locationCritera.setCostAllowed(true);
+        locationCritera.setPowerRequirement(Criteria.NO_REQUIREMENT);
+
+        String providerName = locationManager.getBestProvider(locationCritera, true);
+
+        if (providerName != null && locationManager.isProviderEnabled(providerName)) {*/
+        if ( locationManager.isProviderEnabled( LocationManager.GPS_PROVIDER ) ) {
+            // Register the listener with the Location Manager to receive location updates
+            Log.i("provider enabled","provider is enabled");
+            try{
+                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
+            }catch(SecurityException e){
+                e.printStackTrace();
+            }
+        } else {
+            try{
+            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
+            }catch(SecurityException e){
+                e.printStackTrace();
+            }
+        }
 
         return v;
     }

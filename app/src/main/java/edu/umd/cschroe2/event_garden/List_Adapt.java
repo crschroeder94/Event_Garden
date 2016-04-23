@@ -134,14 +134,24 @@ public class List_Adapt extends BaseAdapter {
         TextView equip = (TextView) itemLayout.findViewById(R.id.equip);
         addEquipText(equip, event);
 
-        Button attend = (Button) itemLayout.findViewById(R.id.attend);
+        final Button attend = (Button) itemLayout.findViewById(R.id.attend);
         attend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(mContext, "You are attending "+event.event_name+"!", Toast.LENGTH_SHORT).show();
-                event.attending=true;
                 TextView attending_text = (TextView) itemLayout.findViewById(R.id.attending_text);
-                attending_text.setVisibility(View.VISIBLE);
+                if(attend.getText().toString().equals("Attend")){
+                    Toast.makeText(mContext, "You are attending "+event.event_name+"!", Toast.LENGTH_SHORT).show();
+                    event.attending=true;
+
+                    attending_text.setVisibility(View.VISIBLE);
+                    attend.setText("Unattend");
+                }else{
+                    event.attending=false;
+                    attending_text.setVisibility(View.GONE);
+                    attend.setText("Attend");
+                }
+
+
             }
         });
 
