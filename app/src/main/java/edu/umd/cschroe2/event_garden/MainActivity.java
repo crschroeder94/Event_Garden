@@ -46,6 +46,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -61,7 +62,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        eventGardenDatabase = new DatabaseHelper(this);
+        // Setup database
+        eventGardenDatabase = DatabaseHelper.getInstance(this);
+        eventGardenDatabase.onUpgrade(eventGardenDatabase.getWritableDatabase(),1,2);
 
         attending = new ArrayList<String>();
         filter=new Filter();
@@ -256,18 +259,36 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent i){
         if(requestCode == ADD_EVENT_REQUEST && resultCode == RESULT_OK){
-            //add event object to adapter
+
+            //add event object to SQL database
             Event event = (Event) i.getSerializableExtra("event");
-            if (eventGardenDatabase.insertEvent(event) == false){
+            long eventID = eventGardenDatabase.insertEvent(event);
+            if (eventID == -1){
                 Toast.makeText(MainActivity.this, "Unable to access Sqlite database.", Toast.LENGTH_SHORT).show();
             }
 
             // Todo This is a debug statement for the sql database.
+            Log.d("Events found", ""+eventGardenDatabase.getAllEvents().size());
             for (Event e : eventGardenDatabase.getAllEvents()){
-                Log.d("EVENT", e.event_name);
+                Log.d("EVENTNAME", e.event_name);
+                Log.d("event date", e.date);
+                Log.d("event time", e.time);
+                Log.d("event location", e.location);
+                Log.d("event description", e.description);
+                for (String s : e.filters){
+                    Log.d("event category", s);
+                }
+                Log.d("Event","Equipment");
+                java.util.Iterator iter = e.equipment.entrySet().iterator();
+                while (iter.hasNext()){
+                    Map.Entry pair = (Map.Entry) iter.next();
+                    Log.d("Equipment Name",(String)pair.getKey());
+                    Log.d("Equipment quantity",pair.getValue().toString());
+                }
             }
-            // Todo End debug stuff.
+            // Todo End debug for sqldatabase.
 
+            // Add event to adapter.
             String curr_tab_tag = tabHost.getCurrentTabTag();
             //Log.i("current tab tag",curr_tab_tag);
             //List_Fragment f = (List_Fragment) getSupportFragmentManager().findFragmentByTag(curr_tab_tag);
