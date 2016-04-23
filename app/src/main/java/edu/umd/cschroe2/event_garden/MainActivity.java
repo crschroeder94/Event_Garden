@@ -64,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Setup database
         eventGardenDatabase = DatabaseHelper.getInstance(this);
-        eventGardenDatabase.onUpgrade(eventGardenDatabase.getWritableDatabase(),1,2);
+        eventGardenDatabase.onCreate(eventGardenDatabase.getWritableDatabase());
 
         attending = new ArrayList<String>();
         filter=new Filter();

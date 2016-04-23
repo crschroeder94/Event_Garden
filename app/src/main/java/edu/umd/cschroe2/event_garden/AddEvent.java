@@ -47,6 +47,9 @@ public class AddEvent extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.add_event);
 
+        //set up coder.
+        coder = new Geocoder(this.getApplicationContext());
+
         dateFormatter = new SimpleDateFormat("MM-dd-yyyy", Locale.US);
         date = (Button) findViewById(R.id.date);
         date.setOnClickListener(new View.OnClickListener() {
