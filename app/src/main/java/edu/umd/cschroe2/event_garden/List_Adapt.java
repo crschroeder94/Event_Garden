@@ -134,6 +134,27 @@ public class List_Adapt extends BaseAdapter {
         TextView equip = (TextView) itemLayout.findViewById(R.id.equip);
         addEquipText(equip, event);
 
+        String cat = "";
+        com.mikepenz.iconics.view.IconicsTextView categories = (com.mikepenz.iconics.view.IconicsTextView) itemLayout.findViewById(R.id.categories);
+        for(String i : event.filters){
+            if(i.equals("Environmental")){
+                cat += "{faw_recycle} ";
+            }
+            if(i.equals("Recreation")){
+                cat += "{faw-futbol-o}";
+            }
+            if(i.equals("Arts")){
+                cat += "{faw-paint_brush}";
+            }
+            if(i.equals("Animals")){
+                cat += "{faw-paw}";
+            }
+            if(i.equals("Social")){
+                cat += "{faw-glass}";
+            }
+        }
+        categories.setText(cat);
+
         final Button attend = (Button) itemLayout.findViewById(R.id.attend);
         attend.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -1,43 +1,90 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
+    xmlns:fancy="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorPrimaryDark">
     <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="50dp">
+        android:layout_height="wrap_content"
+        android:paddingTop="56dp"
+        android:paddingLeft="24dp"
+        android:paddingRight="24dp">
+
+
+
+        <com.mikepenz.iconics.view.IconicsTextView
+            android:text="{faw_pagelines}"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="100dp"
+            android:textColor="@color/white"
+            android:layout_gravity="center"
+            android:paddingBottom="30dp"/>
 
         <TextView
-            android:layout_width="100dp"
-            android:layout_height="40dp"
-            android:text="Username:"/>
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Welcome to Event Garden!"
+            android:textColor="@color/white"
+            android:layout_gravity="center"
+            android:textSize="40dp"
+            android:typeface="serif"/>
 
-        <EditText
-            android:layout_width="300dp"
-            android:layout_height="40dp"
-            android:id="@+id/username"/>
-    </LinearLayout>
-
-    <LinearLayout
+    <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
-        android:layout_height="50dp">
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:layout_gravity="center">
+        <EditText android:id="@+id/input_email"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@color/white"
+            android:text="EventPlanner1"/>
+    </android.support.design.widget.TextInputLayout>
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:layout_gravity="center"
 
-        <TextView
-            android:layout_width="100dp"
-            android:layout_height="40dp"
-            android:text="Password:"/>
-
-        <EditText
-            android:layout_width="300dp"
-            android:layout_height="40dp"
+        >
+        <EditText android:id="@+id/input_password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
             android:inputType="textPassword"
-            android:id="@+id/password"/>
-    </LinearLayout>
+            android:layout_gravity="center"
+            android:text="password"
+            />
+    </android.support.design.widget.TextInputLayout>
 
-    <Button
-        android:layout_width="300dp"
-        android:layout_height="40dp"
-        android:text="LogIn"
-        android:id="@+id/loginbutton"/>
+        <mehdi.sakout.fancybuttons.FancyButton
+            android:id="@+id/login"
+            android:layout_marginTop="30dp"
+            android:layout_gravity="center"
+            android:gravity="center_horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingBottom="10dp"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:paddingTop="10dp"
+            fancy:fb_borderColor="#FFFFFF"
+            fancy:fb_borderWidth="1dp"
+            fancy:fb_defaultColor="#7ab800"
+            fancy:fb_focusColor="#9bd823"
 
+
+            fancy:fb_radius="30dp"
+            fancy:fb_text="LOGIN"
+            fancy:fb_textColor="#FFFFFF" />
+
+</LinearLayout>
 </LinearLayout>
