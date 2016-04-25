@@ -126,10 +126,11 @@ public class MainActivity extends AppCompatActivity {
                 ContextCompat.getColor(this, android.R.color.background_light)).build());
 
         skittleBuilder.setSkittleClickListener(new SkittleBuilder.OnSkittleClickListener() {
-            int up_down=0;
+            int up_down = 0;
+
             @Override
             public void onSkittleClick(BaseSkittle skittle, int position) {
-                switch (position){
+                switch (position) {
                     case 0: //Add Event
                         Intent intent = new Intent(MainActivity.this, AddEvent.class);
                         startActivityForResult(intent, ADD_EVENT_REQUEST);
@@ -182,24 +183,26 @@ public class MainActivity extends AppCompatActivity {
                                 dialog.dismiss();
                             }
                         });
-                            break;
+                        break;
                     case 2: //Profile
+                        Intent i = new Intent(MainActivity.this, Profile.class);
+                        startActivity(i);
                         break;
                 }
             }
 
             @Override
             public void onMainSkittleClick() {
-                if(up_down==0){
-                    up_down=1;
+                if (up_down == 0) {
+                    up_down = 1;
                     Bitmap bmpOriginal = BitmapFactory.decodeResource(getResources(), R.drawable.up);
                     Bitmap bmResult = Bitmap.createBitmap(bmpOriginal.getWidth(), bmpOriginal.getHeight(), Bitmap.Config.ARGB_8888);
                     Canvas tempCanvas = new Canvas(bmResult);
-                    tempCanvas.rotate(180, bmpOriginal.getWidth()/2, bmpOriginal.getHeight()/2);
+                    tempCanvas.rotate(180, bmpOriginal.getWidth() / 2, bmpOriginal.getHeight() / 2);
                     tempCanvas.drawBitmap(bmpOriginal, 0, 0, null);
                     Drawable drawable = new BitmapDrawable(getResources(), bmResult);
                     skittleBuilder.changeMainSkittleIcon(drawable);
-                }else{
+                } else {
                     skittleBuilder.changeMainSkittleIcon(getResources().getDrawable(R.drawable.up));
                     up_down = 0;
                 }
