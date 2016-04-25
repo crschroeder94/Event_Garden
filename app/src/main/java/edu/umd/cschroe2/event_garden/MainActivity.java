@@ -12,15 +12,19 @@ import android.content.pm.PackageManager;
 import android.content.pm.Signature;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTabHost;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Base64;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -46,6 +50,12 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Map;
+
+import snow.skittles.BaseSkittle;
+import snow.skittles.SkittleBuilder;
+import snow.skittles.SkittleLayout;
+import snow.skittles.TextSkittle;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -55,13 +65,19 @@ public class MainActivity extends AppCompatActivity {
     Filter filter;
 
     DatabaseHelper eventGardenDatabase;
-
+//https://github.com/mikepenz/Android-Iconics
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        eventGardenDatabase = new DatabaseHelper(this);
+        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        setSupportActionBar(myToolbar);
+        //http://stackoverflow.com/questions/12246388/remove-shadow-below-actionbar
+        getSupportActionBar().setElevation(0);
+        //getSupportActionBar().setIcon(R.drawable.plant_icon);
+        // Setup database
+        eventGardenDatabase = DatabaseHelper.getInstance(this);
+        eventGardenDatabase.onCreate(eventGardenDatabase.getWritableDatabase());
 
         attending = new ArrayList<String>();
         filter=new Filter();
@@ -86,103 +102,122 @@ public class MainActivity extends AppCompatActivity {
                 setTabColor();
             }
         }); //try setting all the points up here
+
+        //initial tab color set
         setTabColor();
 
-        //list_adapt = new List_Adapt(getApplicationContext());
 
-        android.support.design.widget.FloatingActionButton add_event =
-                (android.support.design.widget.FloatingActionButton)findViewById(R.id.addevent);
-        add_event.setOnClickListener(new View.OnClickListener() {
+//http://stackoverflow.com/questions/7815689/how-do-you-obtain-a-drawable-object-from-a-resource-id-in-android-package
+//https://android-arsenal.com/details/1/2076
+        final SkittleLayout skittleLayout = (SkittleLayout)findViewById(R.id.skittleLayout);
+        final SkittleBuilder skittleBuilder = SkittleBuilder.newInstance((SkittleLayout) findViewById(R.id.skittleLayout), false);
+
+
+        skittleBuilder.addSkittle(new TextSkittle.Builder("Add Event", ContextCompat.getColor(this, R.color.deep_blue),
+                ContextCompat.getDrawable(this, android.R.drawable.ic_menu_add)).setTextBackground(
+                ContextCompat.getColor(this, android.R.color.background_light)).build());
+
+        skittleBuilder.addSkittle(new TextSkittle.Builder("Filter Events", ContextCompat.getColor(this, R.color.deep_blue),
+                ContextCompat.getDrawable(this, android.R.drawable.ic_menu_sort_by_size)).setTextBackground(
+                ContextCompat.getColor(this, android.R.color.background_light)).build());
+
+        skittleBuilder.addSkittle(new TextSkittle.Builder("View Profile", ContextCompat.getColor(this, R.color.deep_blue),
+                ContextCompat.getDrawable(this, android.R.drawable.ic_menu_myplaces)).setTextBackground(
+                ContextCompat.getColor(this, android.R.color.background_light)).build());
+
+        skittleBuilder.setSkittleClickListener(new SkittleBuilder.OnSkittleClickListener() {
+            int up_down=0;
             @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, AddEvent.class);
-                startActivityForResult(intent, ADD_EVENT_REQUEST);
+            public void onSkittleClick(BaseSkittle skittle, int position) {
+                switch (position){
+                    case 0: //Add Event
+                        Intent intent = new Intent(MainActivity.this, AddEvent.class);
+                        startActivityForResult(intent, ADD_EVENT_REQUEST);
+                        break;
+                    case 1: //Filters
+                        final Dialog dialog = new Dialog(MainActivity.this);
+                        dialog.setContentView(R.layout.filter_dialog);
+                        dialog.setTitle("Set Filters");
+                        dialog.setCancelable(true);
+                        Calendar calendar = Calendar.getInstance();
+                        int d = calendar.get(Calendar.DAY_OF_MONTH);
+                        int m = calendar.get(Calendar.MONTH);
+                        String mon = "" + m;
+                        String da = "" + d;
+                        final EditText month = (EditText) dialog.findViewById(R.id.month);
+                        month.setText(mon);
+                        final EditText day = (EditText) dialog.findViewById(R.id.day);
+                        day.setText(da);
+                        final EditText radius = (EditText) dialog.findViewById(R.id.rad);
+
+                        CheckBox enviro = (CheckBox) dialog.findViewById(R.id.checkbox_enviro);
+                        CheckBox rec = (CheckBox) dialog.findViewById(R.id.checkbox_rec);
+                        CheckBox arts = (CheckBox) dialog.findViewById(R.id.checkbox_arts);
+                        CheckBox animals = (CheckBox) dialog.findViewById(R.id.checkbox_animals);
+                        CheckBox social = (CheckBox) dialog.findViewById(R.id.checkbox_social);
+                        enviro.setChecked(filter.filter_categories.get("Environmental"));
+                        rec.setChecked(filter.filter_categories.get("Recreation"));
+                        arts.setChecked(filter.filter_categories.get("Arts"));
+                        animals.setChecked(filter.filter_categories.get("Environmental"));
+                        social.setChecked(filter.filter_categories.get("Environmental"));
+
+                        dialog.show();
+                        Button saveButton = (Button) dialog.findViewById(R.id.save);
+                        saveButton.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                filter.setRadius(radius.getText().toString());
+                                filter.setDate(month.getText().toString() + "-" + day.getText().toString() + "-2016");
+                                filter_checkboxes(dialog);
+
+                                List_Fragment list = (List_Fragment) getSupportFragmentManager().findFragmentByTag("tab1");
+                                list.applyFilters(filter);
+                                dialog.dismiss();
+                            }
+                        });
+                        Button cancel = (Button) dialog.findViewById(R.id.cancel);
+                        cancel.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                dialog.dismiss();
+                            }
+                        });
+                            break;
+                    case 2: //Profile
+                        break;
+                }
+            }
+
+            @Override
+            public void onMainSkittleClick() {
+                if(up_down==0){
+                    up_down=1;
+                    Bitmap bmpOriginal = BitmapFactory.decodeResource(getResources(), R.drawable.up);
+                    Bitmap bmResult = Bitmap.createBitmap(bmpOriginal.getWidth(), bmpOriginal.getHeight(), Bitmap.Config.ARGB_8888);
+                    Canvas tempCanvas = new Canvas(bmResult);
+                    tempCanvas.rotate(180, bmpOriginal.getWidth()/2, bmpOriginal.getHeight()/2);
+                    tempCanvas.drawBitmap(bmpOriginal, 0, 0, null);
+                    Drawable drawable = new BitmapDrawable(getResources(), bmResult);
+                    skittleBuilder.changeMainSkittleIcon(drawable);
+                }else{
+                    skittleBuilder.changeMainSkittleIcon(getResources().getDrawable(R.drawable.up));
+                    up_down = 0;
+                }
+
+
             }
         });
 
-        android.support.design.widget.FloatingActionButton filters =
-                (android.support.design.widget.FloatingActionButton)findViewById(R.id.filters);
-        filters.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                final Dialog dialog = new Dialog(MainActivity.this);
-                dialog.setContentView(R.layout.filter_dialog);
-                dialog.setTitle("Set Filters");
-                dialog.setCancelable(true);
-                Calendar calendar = Calendar.getInstance();
-                int d = calendar.get(Calendar.DAY_OF_MONTH);
-                int m = calendar.get(Calendar.MONTH);
-                String mon = "" + m;
-                String da = "" + d;
-                final EditText month = (EditText) dialog.findViewById(R.id.month);
-                month.setText(mon);
-                final EditText day = (EditText) dialog.findViewById(R.id.day);
-                day.setText(da);
-                final EditText radius = (EditText) dialog.findViewById(R.id.rad);
-
-                CheckBox enviro = (CheckBox) dialog.findViewById(R.id.checkbox_enviro);
-                CheckBox rec = (CheckBox) dialog.findViewById(R.id.checkbox_rec);
-                CheckBox arts = (CheckBox) dialog.findViewById(R.id.checkbox_arts);
-                enviro.setChecked(filter.filter_categories.get("Environmental"));
-                rec.setChecked(filter.filter_categories.get("Recreation"));
-                arts.setChecked(filter.filter_categories.get("Arts"));
-
-                dialog.show();
-                Button saveButton = (Button) dialog.findViewById(R.id.save);
-                saveButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        filter.setRadius(radius.getText().toString());
-                        filter.setDate(month.getText().toString() + "-" + day.getText().toString() + "-2016");
-                        filter_checkboxes(dialog);
-
-                        List_Fragment list = (List_Fragment) getSupportFragmentManager().findFragmentByTag("tab1");
-                        list.applyFilters(filter);
-                        dialog.dismiss();
-                    }
-
-
-
-
-                });
-
-                Button cancel = (Button) dialog.findViewById(R.id.cancel);
-                cancel.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        dialog.dismiss();
-                    }
-                });
-            }
-        });
-
-
-        android.support.design.widget.FloatingActionButton profile =
-                (android.support.design.widget.FloatingActionButton)findViewById(R.id.profile);
-        profile.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this,Profile.class);
-                startActivity(intent);
-            }
-        });
-
-        android.support.design.widget.FloatingActionButton search =
-                (android.support.design.widget.FloatingActionButton)findViewById(R.id.search);
-        search.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
 
     }
+
 
     public void filter_checkboxes( Dialog dialog){
         CheckBox enviro = (CheckBox) dialog.findViewById(R.id.checkbox_enviro);
         CheckBox rec = (CheckBox) dialog.findViewById(R.id.checkbox_rec);
         CheckBox arts = (CheckBox) dialog.findViewById(R.id.checkbox_arts);
+        CheckBox animals = (CheckBox) dialog.findViewById(R.id.checkbox_animals);
+        CheckBox social = (CheckBox) dialog.findViewById(R.id.checkbox_social);
         if(enviro.isChecked()){
             filter.filter_categories.put("Environmental",true);
         }else{
@@ -200,43 +235,20 @@ public class MainActivity extends AppCompatActivity {
         }else{
             filter.filter_categories.put("Arts", false);
         }
-    }
 
-    //INSIDE OF FILTERS
-    /*public void onFilterCheckboxClicked(View view) {
-        boolean checked = ((CheckBox) view).isChecked();
-
-        switch(view.getId()) {
-            case R.id.checkbox_rec:
-                if (checked) {
-                    filter.addFilter("Recreation");
-                }
-                break;
-            case R.id.checkbox_arts:
-                if (checked) {
-                    filter.addFilter("Arts");
-                }
-
-                    break;
-            case R.id.checkbox_enviro:
-                if (checked) {
-                    filter.addFilter("Environmental");
-                }
-                    break;
-
+        if(animals.isChecked()){
+            filter.filter_categories.put("Animals",true);
+        }else{
+            filter.filter_categories.put("Animals",false);
         }
-    }*/
 
-    public static Drawable drawableFromUrl(String url) throws IOException {
-        Bitmap x;
-
-        HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
-        connection.connect();
-        InputStream input = connection.getInputStream();
-
-        x = BitmapFactory.decodeStream(input);
-        return new BitmapDrawable(x);
+        if(social.isChecked()){
+            filter.filter_categories.put("Social",true);
+        }else{
+            filter.filter_categories.put("Social",false);
+        }
     }
+
 
     //Change The Backgournd Color of Tabs
     //http://stackoverflow.com/questions/9356546/is-it-possible-to-change-the-color-of-selected-tab-in-android
@@ -246,9 +258,9 @@ public class MainActivity extends AppCompatActivity {
             tabHost.getTabWidget().getChildAt(i).setBackgroundColor(getResources().getColor(R.color.white)); //unselected
 
         if(tabHost.getCurrentTab()==0)
-            tabHost.getTabWidget().getChildAt(tabHost.getCurrentTab()).setBackgroundColor(getResources().getColor(R.color.green)); //1st tab selected
+            tabHost.getTabWidget().getChildAt(tabHost.getCurrentTab()).setBackgroundColor(getResources().getColor(R.color.colorAccent)); //1st tab selected
         else
-            tabHost.getTabWidget().getChildAt(tabHost.getCurrentTab()).setBackgroundColor(getResources().getColor(R.color.green)); //2nd tab selected
+            tabHost.getTabWidget().getChildAt(tabHost.getCurrentTab()).setBackgroundColor(getResources().getColor(R.color.colorAccent)); //2nd tab selected
     }
 
     //http://stackoverflow.com/questions/2736389/how-to-pass-an-object-from-one-activity-to-another-on-android
@@ -256,18 +268,36 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent i){
         if(requestCode == ADD_EVENT_REQUEST && resultCode == RESULT_OK){
-            //add event object to adapter
+
+            //add event object to SQL database
             Event event = (Event) i.getSerializableExtra("event");
-            if (eventGardenDatabase.insertEvent(event) == false){
+            long eventID = eventGardenDatabase.insertEvent(event);
+            if (eventID == -1){
                 Toast.makeText(MainActivity.this, "Unable to access Sqlite database.", Toast.LENGTH_SHORT).show();
             }
 
             // Todo This is a debug statement for the sql database.
+            Log.d("Events found", ""+eventGardenDatabase.getAllEvents().size());
             for (Event e : eventGardenDatabase.getAllEvents()){
-                Log.d("EVENT", e.event_name);
+                Log.d("EVENTNAME", e.event_name);
+                Log.d("event date", e.date);
+                Log.d("event time", e.time);
+                Log.d("event location", e.location);
+                Log.d("event description", e.description);
+                for (String s : e.filters){
+                    Log.d("event category", s);
+                }
+                Log.d("Event","Equipment");
+                java.util.Iterator iter = e.equipment.entrySet().iterator();
+                while (iter.hasNext()){
+                    Map.Entry pair = (Map.Entry) iter.next();
+                    Log.d("Equipment Name",(String)pair.getKey());
+                    Log.d("Equipment quantity",pair.getValue().toString());
+                }
             }
-            // Todo End debug stuff.
+            // Todo End debug for sqldatabase.
 
+            // Add event to adapter.
             String curr_tab_tag = tabHost.getCurrentTabTag();
             //Log.i("current tab tag",curr_tab_tag);
             //List_Fragment f = (List_Fragment) getSupportFragmentManager().findFragmentByTag(curr_tab_tag);
@@ -282,8 +312,30 @@ public class MainActivity extends AppCompatActivity {
 
         }
     }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_main, menu);
 
+        return true;
+    }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.search:
 
+                return true;
+            case R.id.add:
+
+                return true;
+            case R.id.profile:
+
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
 
 }

@@ -19,19 +19,16 @@ public class LogIn extends AppCompatActivity {
 
 
 
-        Button login = (Button) findViewById(R.id.loginbutton);
+        mehdi.sakout.fancybuttons.FancyButton login = (mehdi.sakout.fancybuttons.FancyButton) findViewById(R.id.login);
         login.setOnClickListener(new View.OnClickListener() {
-            EditText username = (EditText) findViewById(R.id.username);
-            EditText password = (EditText) findViewById(R.id.password);
+
             @Override
             public void onClick(View v) {
-                if(username.getText().toString().equals("")||password.getText().toString().equals("")){
-                    Toast.makeText(getApplicationContext(), "You need to enter username and password", Toast.LENGTH_SHORT).show();
-                }else{
+
                     Intent intent = new Intent(LogIn.this,MainActivity.class);
                     startActivity(intent);
 
-                }
+
             }
         });
 

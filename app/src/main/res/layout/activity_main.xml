@@ -13,12 +13,23 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
+        app:titleTextColor="@android:color/white"
         >
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/my_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            android:elevation="4dp"
+            app:titleTextColor="@android:color/white"
+            android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
 
         <TabWidget
             android:id = "@android:id/tabs"
             android:layout_width="match_parent"
-            android:layout_height="40dp">
+            android:layout_height="50dp"
+            >
 
         </TabWidget>
 
@@ -26,40 +37,20 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@android:id/tabcontent">
+
         </FrameLayout>
     </LinearLayout>
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/search"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|right"
-        android:layout_margin="16dp"
-        android:src="@android:drawable/ic_menu_search"/>
+    <snow.skittles.SkittleLayout
+        android:id="@+id/skittleLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        app:mainSkittleColor="@color/colorPrimary"
+        app:mainSkittleIcon="@drawable/up"
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/profile"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|left"
-        android:layout_margin="16dp"
-        android:src="@android:drawable/ic_menu_myplaces"/>
+        >
+    </snow.skittles.SkittleLayout>
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/addevent"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="top|left"
-        android:layout_marginTop="50dp"
-        android:layout_marginLeft="20dp"
-        android:src="@android:drawable/ic_menu_add"/>
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/filters"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="top|right"
-        android:layout_marginTop="50dp"
-        android:layout_marginRight="20dp"
-        android:src="@android:drawable/ic_menu_sort_by_size"/>
 </android.support.v4.app.FragmentTabHost>

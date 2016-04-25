@@ -134,24 +134,49 @@ public class List_Adapt extends BaseAdapter {
         TextView equip = (TextView) itemLayout.findViewById(R.id.equip);
         addEquipText(equip, event);
 
-        Button attend = (Button) itemLayout.findViewById(R.id.attend);
+        String cat = "";
+        com.mikepenz.iconics.view.IconicsTextView categories = (com.mikepenz.iconics.view.IconicsTextView) itemLayout.findViewById(R.id.categories);
+        for(String i : event.filters){
+            if(i.equals("Environmental")){
+                cat += "{faw_recycle} ";
+            }
+            if(i.equals("Recreation")){
+                cat += "{faw-futbol-o}";
+            }
+            if(i.equals("Arts")){
+                cat += "{faw-paint_brush}";
+            }
+            if(i.equals("Animals")){
+                cat += "{faw-paw}";
+            }
+            if(i.equals("Social")){
+                cat += "{faw-glass}";
+            }
+        }
+        categories.setText(cat);
+
+        //https://github.com/medyo/Fancybuttons
+        final mehdi.sakout.fancybuttons.FancyButton attend = (mehdi.sakout.fancybuttons.FancyButton) itemLayout.findViewById(R.id.attend);
         attend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(mContext, "You are attending "+event.event_name+"!", Toast.LENGTH_SHORT).show();
-                event.attending=true;
                 TextView attending_text = (TextView) itemLayout.findViewById(R.id.attending_text);
-                attending_text.setVisibility(View.VISIBLE);
+                if(attend.getText().toString().equals("Attend")){
+                    Toast.makeText(mContext, "You are attending "+event.event_name+"!", Toast.LENGTH_SHORT).show();
+                    event.attending=true;
+
+                    attending_text.setVisibility(View.VISIBLE);
+                    attend.setText("Unattend");
+                }else{
+                    event.attending=false;
+                    attending_text.setVisibility(View.GONE);
+                    attend.setText("Attend");
+                }
+
+
             }
         });
 
-        Button collapse = (Button) itemLayout.findViewById(R.id.collapse);
-        collapse.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                expandable_layout.setVisibility(View.GONE);
-            }
-        });
         return itemLayout;
 
     }

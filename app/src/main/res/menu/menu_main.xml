@@ -2,9 +2,19 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <item
-        android:id="@+id/delete"
-        android:orderInCategory="100"
-        android:title="Delete"
-        app:showAsAction="never" />
+    <item android:id="@+id/search"
+        android:title="search"
+        android:icon="@drawable/search"
+        app:showAsAction="ifRoom"
+        android:actionViewClass="android.widget.SearchView" />
+    <item android:id="@+id/add"
+        android:title="add"
+        android:icon="@android:drawable/ic_menu_add"
+        app:showAsAction="ifRoom"
+         />
+    <item android:id="@+id/profile"
+        android:title="profile"
+        android:icon="@drawable/profile"
+        app:showAsAction="ifRoom"
+        />
 </menu>
