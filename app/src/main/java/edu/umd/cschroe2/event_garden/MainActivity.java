@@ -153,9 +153,13 @@ public class MainActivity extends AppCompatActivity {
                         CheckBox enviro = (CheckBox) dialog.findViewById(R.id.checkbox_enviro);
                         CheckBox rec = (CheckBox) dialog.findViewById(R.id.checkbox_rec);
                         CheckBox arts = (CheckBox) dialog.findViewById(R.id.checkbox_arts);
+                        CheckBox animals = (CheckBox) dialog.findViewById(R.id.checkbox_animals);
+                        CheckBox social = (CheckBox) dialog.findViewById(R.id.checkbox_social);
                         enviro.setChecked(filter.filter_categories.get("Environmental"));
                         rec.setChecked(filter.filter_categories.get("Recreation"));
                         arts.setChecked(filter.filter_categories.get("Arts"));
+                        animals.setChecked(filter.filter_categories.get("Environmental"));
+                        social.setChecked(filter.filter_categories.get("Environmental"));
 
                         dialog.show();
                         Button saveButton = (Button) dialog.findViewById(R.id.save);
@@ -212,6 +216,8 @@ public class MainActivity extends AppCompatActivity {
         CheckBox enviro = (CheckBox) dialog.findViewById(R.id.checkbox_enviro);
         CheckBox rec = (CheckBox) dialog.findViewById(R.id.checkbox_rec);
         CheckBox arts = (CheckBox) dialog.findViewById(R.id.checkbox_arts);
+        CheckBox animals = (CheckBox) dialog.findViewById(R.id.checkbox_animals);
+        CheckBox social = (CheckBox) dialog.findViewById(R.id.checkbox_social);
         if(enviro.isChecked()){
             filter.filter_categories.put("Environmental",true);
         }else{
@@ -228,6 +234,18 @@ public class MainActivity extends AppCompatActivity {
             filter.filter_categories.put("Arts", true);
         }else{
             filter.filter_categories.put("Arts", false);
+        }
+
+        if(animals.isChecked()){
+            filter.filter_categories.put("Animals",true);
+        }else{
+            filter.filter_categories.put("Animals",false);
+        }
+
+        if(social.isChecked()){
+            filter.filter_categories.put("Social",true);
+        }else{
+            filter.filter_categories.put("Social",false);
         }
     }
 

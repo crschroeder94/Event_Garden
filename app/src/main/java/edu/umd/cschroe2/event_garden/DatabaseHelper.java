@@ -76,7 +76,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + "attending BOOLEAN DEFAULT false,"
                 + "Environmental BOOLEAN DEFAULT false,"
                 + "Recreation BOOLEAN DEFAULT false,"
-                + "Arts BOOLEAN DEFAULT false"
+                + "Arts BOOLEAN DEFAULT false,"
+                + "Animals BOOLEAN DEFAULT false,"
+                + "Social BOOLEAN DEFAULT false"
                 + ")");
 
         // Create Table of all equipment logs.
@@ -132,6 +134,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         eventContentValues.put("Environmental", event.hasFilter("Environmental"));
         eventContentValues.put("Recreation", event.hasFilter("Recreation"));
         eventContentValues.put("Arts", event.hasFilter("Arts"));
+        //eventContentValues.put("Animals", event.hasFilter("Animals"));
+        //eventContentValues.put("Social", event.hasFilter("Social"));
         eventID = sqLiteDatabase.insert("Events", null, eventContentValues);
         boolean insertSuccess = (eventID != -1);
         if (eventID == -1){

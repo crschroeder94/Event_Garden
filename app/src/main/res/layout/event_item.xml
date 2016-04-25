@@ -35,7 +35,7 @@
             android:layout_marginLeft="30dp"
             android:textColor="@color/green"
             android:id="@+id/attending_text"
-
+            android:visibility="gone"
             />
 
         <com.mikepenz.iconics.view.IconicsTextView

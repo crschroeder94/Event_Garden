@@ -107,23 +107,78 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="50dp">
+            android:layout_height="wrap_content"
+            >
 
             <CheckBox android:id="@+id/checkbox_rec"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Recreation"
                 android:onClick="onCreateCheckboxClicked"/>
+            <com.mikepenz.iconics.view.IconicsTextView
+                android:text="{faw-futbol-o}"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="20dp"
+                android:textColor="@color/dark_blue"
+                />
             <CheckBox android:id="@+id/checkbox_enviro"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Environmental"
                 android:onClick="onCreateCheckboxClicked"/>
+            <com.mikepenz.iconics.view.IconicsTextView
+                android:text="{faw_recycle}"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="20dp"
+                android:textColor="@color/dark_blue"
+                />
             <CheckBox android:id="@+id/checkbox_arts"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Arts"
                 android:onClick="onCreateCheckboxClicked"/>
+            <com.mikepenz.iconics.view.IconicsTextView
+                android:text="{faw-paint_brush}"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="20dp"
+                android:textColor="@color/dark_blue"
+                />
+
+
+        </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        >
+        <CheckBox android:id="@+id/checkbox_animals"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Animals"
+            android:onClick="onCreateCheckboxClicked"/>
+        <com.mikepenz.iconics.view.IconicsTextView
+            android:text="{faw-paw}"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20dp"
+            android:textColor="@color/dark_blue"
+            />
+        <CheckBox android:id="@+id/checkbox_social"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Social"
+            android:onClick="onCreateCheckboxClicked"/>
+        <com.mikepenz.iconics.view.IconicsTextView
+            android:text="{faw-glass}"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20dp"
+            android:textColor="@color/dark_blue"
+            />
 
         </LinearLayout>
 

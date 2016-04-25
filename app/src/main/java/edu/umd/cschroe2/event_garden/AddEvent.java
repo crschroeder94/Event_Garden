@@ -204,7 +204,16 @@ public class AddEvent extends AppCompatActivity {
                     filters.add("Environmental");
                 }
                 break;
-
+            case R.id.checkbox_animals:
+                if (checked) {
+                    filters.add("Animals");
+                }
+                break;
+            case R.id.checkbox_social:
+                if (checked) {
+                    filters.add("Social");
+                }
+                break;
         }
     }
 
