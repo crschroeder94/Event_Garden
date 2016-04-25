@@ -155,7 +155,8 @@ public class List_Adapt extends BaseAdapter {
         }
         categories.setText(cat);
 
-        final Button attend = (Button) itemLayout.findViewById(R.id.attend);
+        //https://github.com/medyo/Fancybuttons
+        final mehdi.sakout.fancybuttons.FancyButton attend = (mehdi.sakout.fancybuttons.FancyButton) itemLayout.findViewById(R.id.attend);
         attend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -176,13 +177,6 @@ public class List_Adapt extends BaseAdapter {
             }
         });
 
-        Button collapse = (Button) itemLayout.findViewById(R.id.collapse);
-        collapse.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                expandable_layout.setVisibility(View.GONE);
-            }
-        });
         return itemLayout;
 
     }
