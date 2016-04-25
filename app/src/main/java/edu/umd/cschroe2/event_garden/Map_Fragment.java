@@ -54,6 +54,11 @@ public class Map_Fragment extends Fragment{
         setRetainInstance(true);
         // Setup coder, which is used to get Lat/Long for addresses.
         coder = new Geocoder(this.getContext());
+        DatabaseHelper databaseHelper = DatabaseHelper.getInstance(this.getContext().getApplicationContext());
+        ArrayList<Event> events = databaseHelper.getAllEvents();
+        for (Event event : events) {
+            addMarker(event, false);
+        }
     }
 
     @Override
@@ -85,7 +90,8 @@ public class Map_Fragment extends Fragment{
         } catch (GooglePlayServicesNotAvailableException e) {
             e.printStackTrace();
         }
-//http://stackoverflow.com/questions/24320989/locationmanager-locationmanager-this-getsystemservicecontext-location-servi
+
+        //http://stackoverflow.com/questions/24320989/locationmanager-locationmanager-this-getsystemservicecontext-location-servi
         // Acquire a reference to the system Location Manager
         final LocationManager locationManager = (LocationManager)getContext().getSystemService(Context.LOCATION_SERVICE);
         // Define a listener that responds to location updates
@@ -145,6 +151,10 @@ public class Map_Fragment extends Fragment{
     }
 
     public void addMarker(Event event){
+        addMarker(event,true);
+    }
+
+    public void addMarker(Event event, boolean render){
         // http://stackoverflow.com/questions/17835426/get-latitude-longitude-from-address-in-android
         try {
             // TODO Prompt user to select correct location if multiple locations are found.
@@ -158,11 +168,12 @@ public class Map_Fragment extends Fragment{
                 // Create event marker and add it to the list of markers, as well as add it to the map.
                 EventMarker newMarker = new EventMarker(event,new MarkerOptions().position(new LatLng(latitude, longitude)).title(event.event_name));
                 eventMarkers.add(newMarker);
-                map.addMarker(newMarker.markerOptions);
+                if (render) {
 
-                // Zoom in on the created event.
-                CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(new LatLng(latitude, longitude), 10);
-                map.animateCamera(cameraUpdate);
+                    // Zoom in on the created event.
+                    CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(new LatLng(latitude, longitude), 10);
+                    map.animateCamera(cameraUpdate);
+                }
             } else {
                 Log.d(this.getClass().getName().toString(), "Could not find address");
                 Toast.makeText(this.getContext(), "Could not find address", Toast.LENGTH_SHORT).show();
