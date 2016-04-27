@@ -77,8 +77,8 @@ public class MainActivity extends AppCompatActivity {
         //getSupportActionBar().setIcon(R.drawable.plant_icon);
         // Setup database
         eventGardenDatabase = DatabaseHelper.getInstance(this);
-        eventGardenDatabase.onCreate(eventGardenDatabase.getWritableDatabase());
-
+        //eventGardenDatabase.onCreate(eventGardenDatabase.getWritableDatabase());
+        eventGardenDatabase.onUpgrade(eventGardenDatabase.getWritableDatabase(),0,1);
         attending = new ArrayList<String>();
         filter=new Filter();
 

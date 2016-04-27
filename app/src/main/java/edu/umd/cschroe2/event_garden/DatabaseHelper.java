@@ -96,7 +96,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + "PRIMARY KEY ('event_id', 'equipment_id')"
                 + ")");
 
+        db.execSQL("CREATE TABLE IF NOT EXISTS Profiles ("
+                +"id INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + "description VARCHAR(50),"
+                +"reputation INTEGER DEFAULT 0,"
+                + ")");
+
+        db.execSQL("CREATE TABLE IF NOT EXISTS Profile_Event ("   // this is the table of whos hosting
+                + "profile_id INTEGER NOT NULL,"
+                + "event_id INTEGER NOT NULL,"
+                + "PRIMARY KEY ('event_id', 'profile_id')"
+                + ")");
+
         sqLiteDatabase = db;
+
+
+        //ADD DUMMY DATA
     }
 
     @Override
@@ -134,8 +149,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         eventContentValues.put("Environmental", event.hasFilter("Environmental"));
         eventContentValues.put("Recreation", event.hasFilter("Recreation"));
         eventContentValues.put("Arts", event.hasFilter("Arts"));
-        //eventContentValues.put("Animals", event.hasFilter("Animals"));
-        //eventContentValues.put("Social", event.hasFilter("Social"));
+        eventContentValues.put("Animals", event.hasFilter("Animals"));
+        eventContentValues.put("Social", event.hasFilter("Social"));
         eventID = sqLiteDatabase.insert("Events", null, eventContentValues);
         boolean insertSuccess = (eventID != -1);
         if (eventID == -1){
@@ -210,7 +225,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             // Populate categories array.
             ArrayList<String> categories = new ArrayList<String>();
 
-            String[] categoryTypes = {"Environmental", "Recreation", "Arts"};
+            String[] categoryTypes = {"Environmental", "Recreation", "Arts","Animals","Social"};
             for (int i=0; i < categoryTypes.length; i++) {
                 if (eventCursor.getInt(eventCursor.getColumnIndex(categoryTypes[i])) > 0) {
                     categories.add(categoryTypes[i]);
