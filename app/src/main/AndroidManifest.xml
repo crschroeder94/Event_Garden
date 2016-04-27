@@ -52,6 +52,12 @@
 
         </activity>
 
+        <activity android:name=".EventPage"
+            android:label="Event_Garden"
+            android:theme="@style/AppTheme.NoActionBar">
+
+        </activity>
+
     </application>
 
 </manifest>

@@ -30,7 +30,7 @@ public class List_Fragment extends ListFragment {
     @Override
     public void onCreate(Bundle saved){
         super.onCreate(saved);
-        list_adapt = new List_Adapt(getActivity().getApplicationContext());
+        list_adapt = new List_Adapt(getActivity().getApplicationContext(),getActivity());
 
         DatabaseHelper databaseHelper = DatabaseHelper.getInstance(this.getContext().getApplicationContext());
         ArrayList<Event> events = databaseHelper.getAllEvents();
@@ -78,7 +78,7 @@ public class List_Fragment extends ListFragment {
     }
 
     public void applyFilters(Filter f){
-        filtered = new List_Adapt(getActivity().getApplicationContext());
+        filtered = new List_Adapt(getActivity().getApplicationContext(),getActivity());
         getListView().setFastScrollEnabled(true);
         getListView().setAdapter(filtered);
         filtered.filterEvents(f, list_adapt);

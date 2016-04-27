@@ -7,11 +7,7 @@
         android:icon="@drawable/search"
         app:showAsAction="ifRoom"
         android:actionViewClass="android.widget.SearchView" />
-    <item android:id="@+id/add"
-        android:title="add"
-        android:icon="@android:drawable/ic_menu_add"
-        app:showAsAction="ifRoom"
-         />
+
     <item android:id="@+id/profile"
         android:title="profile"
         android:icon="@drawable/profile"

@@ -1,5 +1,7 @@
 package edu.umd.cschroe2.event_garden;
 
+import android.util.Log;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,6 +19,7 @@ public class Event implements Serializable {
     HashMap<String, Integer> equipment;
     ArrayList<String> filters;
     boolean attending;
+    int id;
 
     public Event(String event_name_in, String date_in, String time_in, String descrip_in, String location_in,
                  HashMap<String,Integer> equip_in, ArrayList<String> cat_in){
@@ -37,5 +40,10 @@ public class Event implements Serializable {
             }
         }
         return false;
+    }
+
+    public void setId(int id_in){
+        id = id_in;
+        Log.i("Setting id",""+id);
     }
 }

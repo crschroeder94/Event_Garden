@@ -1,6 +1,8 @@
 package edu.umd.cschroe2.event_garden;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,13 +30,17 @@ public class List_Adapt extends BaseAdapter {
 
     private final Context mContext;
     private final List<Event> temp = new ArrayList<Event>();
+    Activity activity;
+    int VIEW_EVENT_REQUEST = 1;
+    DatabaseHelper db;
     //private final List<Event> filtered = new ArrayList<Event>();
 
 
 
-    public List_Adapt(Context context) {
-
+    public List_Adapt(Context context, Activity a) {
+        activity = a;
         mContext = context;
+        db = DatabaseHelper.getInstance(context);
     }
 
     public void sorted_add(Event f) {
@@ -131,8 +137,8 @@ public class List_Adapt extends BaseAdapter {
         TextView address = (TextView) itemLayout.findViewById(R.id.address);
         address.setText(event.location);
 
-        TextView equip = (TextView) itemLayout.findViewById(R.id.equip);
-        addEquipText(equip, event);
+        //TextView equip = (TextView) itemLayout.findViewById(R.id.equip);
+        //addEquipText(equip, event);
 
         String cat = "";
         com.mikepenz.iconics.view.IconicsTextView categories = (com.mikepenz.iconics.view.IconicsTextView) itemLayout.findViewById(R.id.categories);
@@ -155,30 +161,67 @@ public class List_Adapt extends BaseAdapter {
         }
         categories.setText(cat);
 
+        TextView attending_text = (TextView) itemLayout.findViewById(R.id.attending_text);
         //https://github.com/medyo/Fancybuttons
         final mehdi.sakout.fancybuttons.FancyButton attend = (mehdi.sakout.fancybuttons.FancyButton) itemLayout.findViewById(R.id.attend);
+
+        Log.i("check if attending", "id: "+event.id+": "+db.checkifAttending(event.id));
+        changeAttendinglayout(attending_text, attend, event);
         attend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 TextView attending_text = (TextView) itemLayout.findViewById(R.id.attending_text);
-                if(attend.getText().toString().equals("Attend")){
+                if(changeAttendinglayout(attending_text, attend, event)){
+                    db.attendunattendEvent(event.id, true);
+                }else{
+                    db.attendunattendEvent(event.id, false);
+                }
+                /*if (attend.getText().toString().equals("ATTEND")){
                     Toast.makeText(mContext, "You are attending "+event.event_name+"!", Toast.LENGTH_SHORT).show();
                     event.attending=true;
-
+                    db.attendunattendEvent(event.id, true);
                     attending_text.setVisibility(View.VISIBLE);
-                    attend.setText("Unattend");
+                    attend.setText("UNATTEND");
+                    //change button color?
                 }else{
                     event.attending=false;
+                    db.attendunattendEvent(event.id, false);
                     attending_text.setVisibility(View.GONE);
-                    attend.setText("Attend");
-                }
+                    attend.setText("ATTEND");
+                }*/
 
 
             }
         });
 
+        final mehdi.sakout.fancybuttons.FancyButton event_page = (mehdi.sakout.fancybuttons.FancyButton) itemLayout.findViewById(R.id.gotoevent);
+        event_page.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(activity,EventPage.class);
+                i.putExtra("event", event);
+                activity.startActivity(i);
+            }
+
+        });
+
         return itemLayout;
 
+    }
+
+    public boolean changeAttendinglayout(TextView attending_text,mehdi.sakout.fancybuttons.FancyButton attend, Event event){
+
+        if(db.checkifAttending(event.id)){
+            event.attending = true;
+            attending_text.setVisibility(View.VISIBLE);
+            attend.setText("UNATTEND");
+            return true;
+        }else{
+            event.attending = false;
+            attending_text.setVisibility(View.GONE);
+            attend.setText("ATTEND");
+            return false;
+        }
     }
 
     public void addEquipText(TextView equip ,Event e){

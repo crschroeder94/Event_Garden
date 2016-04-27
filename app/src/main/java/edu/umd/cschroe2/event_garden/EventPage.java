@@ -1,49 +1,31 @@
 package edu.umd.cschroe2.event_garden;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
 
 /**
- * Created by Christine Schroeder on 4/9/2016.
+ * Created by Christine Schroeder on 4/27/2016.
  */
-public class Profile extends AppCompatActivity {
-    Button seeEvents;
-    TextView desc;
-    TextView eventsHosted;
-    TextView name;
-
-    String description;
-    int reputation;
-    int numEvents;
+public class EventPage extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.profile);
+        setContentView(R.layout.event_page);
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
+        //http://stackoverflow.com/questions/12246388/remove-shadow-below-actionbar
+        getSupportActionBar().setElevation(0);
 
-        eventsHosted = (TextView) findViewById(R.id.eventsHosted);
-        desc = (TextView) findViewById(R.id.desc);
-        seeEvents = (Button) findViewById(R.id.seeEvents);
-        name = (TextView) findViewById(R.id.profileName);
 
-        seeEvents.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i = new Intent(Profile.this, PastEvents.class);
-                startActivity(i);
-            }
-        });
+
     }
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

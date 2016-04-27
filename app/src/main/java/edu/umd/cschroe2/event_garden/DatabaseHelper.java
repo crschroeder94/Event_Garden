@@ -99,7 +99,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("CREATE TABLE IF NOT EXISTS Profiles ("
                 +"id INTEGER PRIMARY KEY AUTOINCREMENT,"
                 + "description VARCHAR(50),"
-                +"reputation INTEGER DEFAULT 0,"
+                +"reputation INTEGER DEFAULT 0"
                 + ")");
 
         db.execSQL("CREATE TABLE IF NOT EXISTS Profile_Event ("   // this is the table of whos hosting
@@ -156,6 +156,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         if (eventID == -1){
             sqLiteDatabase.endTransaction();
         }
+
 
         // Insert into Equipment table
         Iterator iter = event.equipment.entrySet().iterator();
@@ -247,4 +248,30 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         eventCursor.close();
         return retArray;
     }
+
+    public void attendunattendEvent(int id, boolean attend){
+        sqLiteDatabase.beginTransaction();
+        ContentValues eventContentValues = new ContentValues();
+        eventContentValues.put("attending", attend);
+        long eventID = sqLiteDatabase.update("Events", eventContentValues, "id="+id,null);
+        //boolean insertSuccess = (eventID != -1);
+        if (eventID == -1){
+            Log.i("Attending","not sucessful");
+            sqLiteDatabase.endTransaction();
+        }else{
+            Log.i("attending", "successful");
+        }
+        //sqLiteDatabase.rawQuery("UPDATE Events set attending=\""+attend+"\" WHERE id="+id+";", null);
+    }
+
+    public boolean checkifAttending(int id){
+        Cursor equipCursor = sqLiteDatabase.rawQuery("SELECT attending FROM Events WHERE id="+id+";", null);
+        while (equipCursor.moveToNext()) {
+            //Log.i("check if attending", equipCursor.getString(equipCursor.getColumnIndex("attending")));
+            return Boolean.parseBoolean(equipCursor.getString(equipCursor.getColumnIndex("attending")));
+        }
+        equipCursor.close();
+        return false;
+    }
+
 }

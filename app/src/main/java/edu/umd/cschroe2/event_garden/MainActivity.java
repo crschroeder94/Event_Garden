@@ -64,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
     public ArrayList<String> attending;
     Filter filter;
 
-    DatabaseHelper eventGardenDatabase;
+    public DatabaseHelper eventGardenDatabase;
 //https://github.com/mikepenz/Android-Iconics
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,8 +77,8 @@ public class MainActivity extends AppCompatActivity {
         //getSupportActionBar().setIcon(R.drawable.plant_icon);
         // Setup database
         eventGardenDatabase = DatabaseHelper.getInstance(this);
-        //eventGardenDatabase.onCreate(eventGardenDatabase.getWritableDatabase());
-        eventGardenDatabase.onUpgrade(eventGardenDatabase.getWritableDatabase(),0,1);
+        eventGardenDatabase.onCreate(eventGardenDatabase.getWritableDatabase());
+        //eventGardenDatabase.onUpgrade(eventGardenDatabase.getWritableDatabase(),0,1);
         attending = new ArrayList<String>();
         filter=new Filter();
 
@@ -275,6 +275,9 @@ public class MainActivity extends AppCompatActivity {
             if (eventID == -1){
                 Toast.makeText(MainActivity.this, "Unable to access Sqlite database.", Toast.LENGTH_SHORT).show();
             }
+            else{
+                event.setId((int)eventID);
+            }
 
             // Todo This is a debug statement for the sql database.
             Log.d("Events found", ""+eventGardenDatabase.getAllEvents().size());
@@ -325,9 +328,6 @@ public class MainActivity extends AppCompatActivity {
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.search:
-
-                return true;
-            case R.id.add:
 
                 return true;
             case R.id.profile:
