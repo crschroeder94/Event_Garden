@@ -1,12 +1,13 @@
 package edu.umd.cschroe2.event_garden;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
  * Created by Christine Schroeder on 4/16/2016.
  */
-public class Filter {
+public class Filter implements Serializable {
 
     //ArrayList<String> filt_categories;
     HashMap<String, Boolean> filter_categories;
@@ -21,6 +22,8 @@ public class Filter {
         filter_categories.put("Recreation",true);
         filter_categories.put("Environmental",true);
         filter_categories.put("Arts",true);
+        filter_categories.put("Animals",true);
+        filter_categories.put("Social",true);
     }
 
     public void setRadius(String rad){

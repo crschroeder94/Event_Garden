@@ -21,6 +21,7 @@ public class Event implements Serializable {
     boolean attending;
     int id;
 
+
     public Event(String event_name_in, String date_in, String time_in, String descrip_in, String location_in,
                  HashMap<String,Integer> equip_in, ArrayList<String> cat_in){
         event_name = event_name_in;

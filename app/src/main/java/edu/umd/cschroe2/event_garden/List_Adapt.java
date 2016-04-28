@@ -50,6 +50,7 @@ public class List_Adapt extends BaseAdapter {
             String[] old_date = event.date.split("-");
             String[] new_date = f.date.split("-");
             if(Integer.parseInt(new_date[0]) < Integer.parseInt(old_date[0])){ //check month
+                //check distance
                     temp.add(i,f);
                     added = true;
                     break;
@@ -137,9 +138,6 @@ public class List_Adapt extends BaseAdapter {
         TextView address = (TextView) itemLayout.findViewById(R.id.address);
         address.setText(event.location);
 
-        //TextView equip = (TextView) itemLayout.findViewById(R.id.equip);
-        //addEquipText(equip, event);
-
         String cat = "";
         com.mikepenz.iconics.view.IconicsTextView categories = (com.mikepenz.iconics.view.IconicsTextView) itemLayout.findViewById(R.id.categories);
         for(String i : event.filters){
@@ -224,15 +222,6 @@ public class List_Adapt extends BaseAdapter {
         }
     }
 
-    public void addEquipText(TextView equip ,Event e){
-        String total = "";
-        for(String name: e.equipment.keySet()){
-            Log.i("equipment name", " "+name);
-            total += name+"-"+e.equipment.get(name)+"\n";
-        }
-        Log.i("equipment string", " "+total);
-        equip.setText(total);
-    }
 
     public String prettifyDate(String old){ //old date in format xx-xx-xxxx
         String pretty = "";

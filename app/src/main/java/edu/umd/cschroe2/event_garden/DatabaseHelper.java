@@ -98,6 +98,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         db.execSQL("CREATE TABLE IF NOT EXISTS Profiles ("
                 +"id INTEGER PRIMARY KEY AUTOINCREMENT,"
+                +"name VARCHAR(20),"
                 + "description VARCHAR(50),"
                 +"reputation INTEGER DEFAULT 0"
                 + ")");
@@ -253,7 +254,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         sqLiteDatabase.beginTransaction();
         ContentValues eventContentValues = new ContentValues();
         eventContentValues.put("attending", attend);
-        long eventID = sqLiteDatabase.update("Events", eventContentValues, "id="+id,null);
+        long eventID = sqLiteDatabase.update("Events", eventContentValues, "id=" + id, null);
         //boolean insertSuccess = (eventID != -1);
         if (eventID == -1){
             Log.i("Attending","not sucessful");
@@ -265,13 +266,41 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public boolean checkifAttending(int id){
-        Cursor equipCursor = sqLiteDatabase.rawQuery("SELECT attending FROM Events WHERE id="+id+";", null);
+        Cursor equipCursor = sqLiteDatabase.rawQuery("SELECT attending FROM Events WHERE id=" + id + ";", null);
         while (equipCursor.moveToNext()) {
             //Log.i("check if attending", equipCursor.getString(equipCursor.getColumnIndex("attending")));
             return Boolean.parseBoolean(equipCursor.getString(equipCursor.getColumnIndex("attending")));
         }
         equipCursor.close();
         return false;
+    }
+
+    public ArrayList<String> getAllEquip (int id){
+        ArrayList<String> equip = new ArrayList<String>();
+        Cursor equipCursor = sqLiteDatabase.rawQuery("SELECT equipment_id FROM Event_Equipment WHERE event_id=" + id + ";", null);
+        while (equipCursor.moveToNext()) {
+            int equip_id = equipCursor.getInt(equipCursor.getColumnIndex("equipment_id"));
+            Cursor equipCursor1 = sqLiteDatabase.rawQuery("SELECT equipment_name FROM Equipment WHERE id=" + equip_id + ";", null);
+            while (equipCursor.moveToNext()) {
+                String name = equipCursor1.getString(equipCursor.getColumnIndex("equipment_name"));
+                equip.add(name);
+            }
+            equipCursor1.close();
+        }
+        equipCursor.close();
+
+        return equip;
+    }
+
+    public int getId(Event event){
+        Cursor equipCursor = sqLiteDatabase.rawQuery("SELECT id FROM Events WHERE event_name=\"" + event.event_name + "\" and " +
+                "event_date="+event.date+" and event_time=\"" +event.time+"\" and location=\""+event.location+"\";", null);
+        while (equipCursor.moveToNext()) {
+            Log.i("find id", equipCursor.getInt(equipCursor.getColumnIndex("id"))+"");
+            return equipCursor.getInt(equipCursor.getColumnIndex("id"));
+        }
+        equipCursor.close();
+        return -1;
     }
 
 }

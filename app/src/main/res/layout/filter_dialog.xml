@@ -59,20 +59,31 @@
 
         </LinearLayout>
 
-    <CheckBox android:id="@+id/checkbox_enviro"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="environmental"
-        android:textSize="20dp"
-        android:checked="true"
-        />
-    <com.mikepenz.iconics.view.IconicsTextView
-        android:text="{faw_recycle}"
+        android:orientation="horizontal">
+        <CheckBox android:id="@+id/checkbox_enviro"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="environmental"
+            android:textSize="20dp"
+            android:checked="true"
+            />
+        <com.mikepenz.iconics.view.IconicsTextView
+            android:text="{faw_recycle}"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20dp"
+            android:textColor="@color/dark_blue"
+            />
+
+    </LinearLayout>
+
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="20dp"
-        android:textColor="@color/dark_blue"
-        />
+        android:orientation="horizontal">
     <CheckBox android:id="@+id/checkbox_rec"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -87,6 +98,12 @@
         android:textSize="20dp"
         android:textColor="@color/dark_blue"
         />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
     <CheckBox android:id="@+id/checkbox_arts"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -101,6 +118,12 @@
         android:textSize="20dp"
         android:textColor="@color/dark_blue"
         />
+</LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
     <CheckBox android:id="@+id/checkbox_animals"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -114,6 +137,12 @@
         android:textSize="20dp"
         android:textColor="@color/dark_blue"
         />
+    </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
     <CheckBox android:id="@+id/checkbox_social"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -127,6 +156,7 @@
         android:textSize="20dp"
         android:textColor="@color/dark_blue"
         />
+        </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
