@@ -1,15 +1,21 @@
 package edu.umd.cschroe2.event_garden;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.support.v4.app.ListFragment;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.support.v4.app.Fragment;
+import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -26,22 +32,27 @@ public class List_Fragment extends ListFragment {
     List_Adapt list_adapt;
     List_Adapt filtered;
     LinearLayout layout;
+    public MainActivity mActivity;
 
     @Override
     public void onCreate(Bundle saved){
         super.onCreate(saved);
-        list_adapt = new List_Adapt(getActivity().getApplicationContext());
+        list_adapt = new List_Adapt(getActivity().getApplicationContext(),getActivity());
 
         DatabaseHelper databaseHelper = DatabaseHelper.getInstance(this.getContext().getApplicationContext());
         ArrayList<Event> events = databaseHelper.getAllEvents();
         for (Event event : events) {
             list_adapt.add(event);
         }
+
+
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.list, container, false);
+
+        final View view = inflater.inflate(R.layout.list, container, false);
 
         return view;
     }
@@ -52,6 +63,7 @@ public class List_Fragment extends ListFragment {
         super.onActivityCreated(savedInstanceState);
             getListView().setFastScrollEnabled(true);
             getListView().setAdapter(list_adapt);
+
             setupClickable();
     }
 
@@ -72,13 +84,15 @@ public class List_Fragment extends ListFragment {
         });
     }
 
+
+
     public void addtoAdapt(Event a){
 
         list_adapt.sorted_add(a);
     }
 
     public void applyFilters(Filter f){
-        filtered = new List_Adapt(getActivity().getApplicationContext());
+        filtered = new List_Adapt(getActivity().getApplicationContext(),getActivity());
         getListView().setFastScrollEnabled(true);
         getListView().setAdapter(filtered);
         filtered.filterEvents(f, list_adapt);

@@ -282,9 +282,6 @@ public class AddEvent extends AppCompatActivity {
             case R.id.search:
 
                 return true;
-            case R.id.add:
-
-                return true;
             case R.id.profile:
 
                 return true;
