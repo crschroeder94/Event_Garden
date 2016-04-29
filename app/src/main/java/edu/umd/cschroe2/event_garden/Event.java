@@ -45,6 +45,6 @@ public class Event implements Serializable {
 
     public void setId(int id_in){
         id = id_in;
-        Log.i("Setting id",""+id);
+        //Log.i("Setting id",""+id);
     }
 }
