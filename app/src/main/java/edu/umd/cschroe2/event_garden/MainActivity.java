@@ -55,6 +55,9 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 
+import br.com.mauker.materialsearchview.MaterialSearchView;
+import br.com.mauker.materialsearchview.MaterialSearchView.OnQueryTextListener;
+
 import snow.skittles.BaseSkittle;
 import snow.skittles.SkittleBuilder;
 import snow.skittles.SkittleLayout;
@@ -69,6 +72,7 @@ public class MainActivity extends AppCompatActivity {
     public int filter_distance= 10;
     private ListView mDrawerList;
     private ArrayAdapter<String> drawerAdapter;
+    MaterialSearchView searchView;
 
     public DatabaseHelper eventGardenDatabase;
     //https://github.com/mikepenz/Android-Iconics
@@ -76,6 +80,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        searchView = (MaterialSearchView) findViewById(R.id.search_view);
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
         //http://stackoverflow.com/questions/12246388/remove-shadow-below-actionbar
@@ -288,6 +293,29 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.search:
 
+                searchView.openSearch();
+                ArrayList<String> eventNames = new ArrayList<String>();
+                ArrayList<Event> allEvents = eventGardenDatabase.getAllEvents();
+                for (Event e : allEvents) {
+                    eventNames.add(e.event_name);
+                }
+                searchView.addSuggestions(eventNames);
+
+                searchView.setOnQueryTextListener(new OnQueryTextListener() {
+                    @Override
+                    public boolean onQueryTextSubmit(String query) {
+                        Intent intent = new Intent(MainActivity.this,EventPage.class);
+                        startActivity(intent);
+
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onQueryTextChange(String newText) {
+                        return false;
+                    }
+                });
+
                 return true;
             case R.id.profile:
                 Intent i = new Intent(MainActivity.this ,Profile.class );
@@ -300,6 +328,15 @@ public class MainActivity extends AppCompatActivity {
 
     public Filter getFilter(){
         return filter;
+    }
+
+    public void onBackPressed() {
+        if (searchView.isOpen()) {
+            // Close the search on the back button press.
+            searchView.closeSearch();
+        } else {
+            super.onBackPressed();
+        }
     }
 
 }
