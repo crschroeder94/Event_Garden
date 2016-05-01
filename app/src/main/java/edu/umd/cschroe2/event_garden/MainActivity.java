@@ -18,6 +18,7 @@ import android.graphics.drawable.Drawable;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTabHost;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -27,10 +28,12 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.NumberPicker;
 import android.widget.TabHost;
 import android.widget.TabWidget;
@@ -52,6 +55,9 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 
+import br.com.mauker.materialsearchview.MaterialSearchView;
+import br.com.mauker.materialsearchview.MaterialSearchView.OnQueryTextListener;
+
 import snow.skittles.BaseSkittle;
 import snow.skittles.SkittleBuilder;
 import snow.skittles.SkittleLayout;
@@ -63,13 +69,18 @@ public class MainActivity extends AppCompatActivity {
     FragmentTabHost tabHost;
     public ArrayList<String> attending;
     Filter filter;
+    public int filter_distance= 10;
+    private ListView mDrawerList;
+    private ArrayAdapter<String> drawerAdapter;
+    MaterialSearchView searchView;
 
     public DatabaseHelper eventGardenDatabase;
-//https://github.com/mikepenz/Android-Iconics
+    //https://github.com/mikepenz/Android-Iconics
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        searchView = (MaterialSearchView) findViewById(R.id.search_view);
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
         //http://stackoverflow.com/questions/12246388/remove-shadow-below-actionbar
@@ -87,13 +98,16 @@ public class MainActivity extends AppCompatActivity {
         //tabHost.setup();
         tabHost.setup(this, getSupportFragmentManager(), android.R.id.tabcontent);
 
+        Bundle b = new Bundle();
+        b.putInt("Filter_distance", 10);
+
         tabHost.addTab(
                 tabHost.newTabSpec("tab1").setIndicator("List", null),
                 List_Fragment.class, null);
 
         tabHost.addTab(
                 tabHost.newTabSpec("tab2").setIndicator("Map", null),
-                Map_Fragment.class, null);
+                Map_Fragment.class, b);
 
         tabHost.setOnTabChangedListener(new TabHost.OnTabChangeListener() {
 
@@ -106,113 +120,61 @@ public class MainActivity extends AppCompatActivity {
         //initial tab color set
         setTabColor();
 
-
-//http://stackoverflow.com/questions/7815689/how-do-you-obtain-a-drawable-object-from-a-resource-id-in-android-package
-//https://android-arsenal.com/details/1/2076
-        final SkittleLayout skittleLayout = (SkittleLayout)findViewById(R.id.skittleLayout);
-        final SkittleBuilder skittleBuilder = SkittleBuilder.newInstance((SkittleLayout) findViewById(R.id.skittleLayout), false);
-
-
-        skittleBuilder.addSkittle(new TextSkittle.Builder("Add Event", ContextCompat.getColor(this, R.color.deep_blue),
-                ContextCompat.getDrawable(this, android.R.drawable.ic_menu_add)).setTextBackground(
-                ContextCompat.getColor(this, android.R.color.background_light)).build());
-
-        skittleBuilder.addSkittle(new TextSkittle.Builder("Filter Events", ContextCompat.getColor(this, R.color.deep_blue),
-                ContextCompat.getDrawable(this, android.R.drawable.ic_menu_sort_by_size)).setTextBackground(
-                ContextCompat.getColor(this, android.R.color.background_light)).build());
-
-        skittleBuilder.addSkittle(new TextSkittle.Builder("View Profile", ContextCompat.getColor(this, R.color.deep_blue),
-                ContextCompat.getDrawable(this, android.R.drawable.ic_menu_myplaces)).setTextBackground(
-                ContextCompat.getColor(this, android.R.color.background_light)).build());
-
-        skittleBuilder.setSkittleClickListener(new SkittleBuilder.OnSkittleClickListener() {
-            int up_down=0;
+        android.support.design.widget.FloatingActionButton add = (android.support.design.widget.FloatingActionButton) findViewById(R.id.add_button);
+        add.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onSkittleClick(BaseSkittle skittle, int position) {
-                switch (position){
-                    case 0: //Add Event
-                        Intent intent = new Intent(MainActivity.this, AddEvent.class);
-                        startActivityForResult(intent, ADD_EVENT_REQUEST);
-                        break;
-                    case 1: //Filters
-                        final Dialog dialog = new Dialog(MainActivity.this);
-                        dialog.setContentView(R.layout.filter_dialog);
-                        dialog.setTitle("Set Filters");
-                        dialog.setCancelable(true);
-                        Calendar calendar = Calendar.getInstance();
-                        int d = calendar.get(Calendar.DAY_OF_MONTH);
-                        int m = calendar.get(Calendar.MONTH);
-                        String mon = "" + m;
-                        String da = "" + d;
-                        final EditText month = (EditText) dialog.findViewById(R.id.month);
-                        month.setText(mon);
-                        final EditText day = (EditText) dialog.findViewById(R.id.day);
-                        day.setText(da);
-                        final EditText radius = (EditText) dialog.findViewById(R.id.rad);
-
-                        CheckBox enviro = (CheckBox) dialog.findViewById(R.id.checkbox_enviro);
-                        CheckBox rec = (CheckBox) dialog.findViewById(R.id.checkbox_rec);
-                        CheckBox arts = (CheckBox) dialog.findViewById(R.id.checkbox_arts);
-                        CheckBox animals = (CheckBox) dialog.findViewById(R.id.checkbox_animals);
-                        CheckBox social = (CheckBox) dialog.findViewById(R.id.checkbox_social);
-                        enviro.setChecked(filter.filter_categories.get("Environmental"));
-                        rec.setChecked(filter.filter_categories.get("Recreation"));
-                        arts.setChecked(filter.filter_categories.get("Arts"));
-                        animals.setChecked(filter.filter_categories.get("Environmental"));
-                        social.setChecked(filter.filter_categories.get("Environmental"));
-
-                        dialog.show();
-                        Button saveButton = (Button) dialog.findViewById(R.id.save);
-                        saveButton.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                filter.setRadius(radius.getText().toString());
-                                filter.setDate(month.getText().toString() + "-" + day.getText().toString() + "-2016");
-                                filter_checkboxes(dialog);
-
-                                List_Fragment list = (List_Fragment) getSupportFragmentManager().findFragmentByTag("tab1");
-                                list.applyFilters(filter);
-                                dialog.dismiss();
-                            }
-                        });
-                        Button cancel = (Button) dialog.findViewById(R.id.cancel);
-                        cancel.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                dialog.dismiss();
-                            }
-                        });
-                            break;
-                    case 2: //Profile
-                        break;
-                }
-            }
-
-            @Override
-            public void onMainSkittleClick() {
-                if(up_down==0){
-                    up_down=1;
-                    Bitmap bmpOriginal = BitmapFactory.decodeResource(getResources(), R.drawable.up);
-                    Bitmap bmResult = Bitmap.createBitmap(bmpOriginal.getWidth(), bmpOriginal.getHeight(), Bitmap.Config.ARGB_8888);
-                    Canvas tempCanvas = new Canvas(bmResult);
-                    tempCanvas.rotate(180, bmpOriginal.getWidth()/2, bmpOriginal.getHeight()/2);
-                    tempCanvas.drawBitmap(bmpOriginal, 0, 0, null);
-                    Drawable drawable = new BitmapDrawable(getResources(), bmResult);
-                    skittleBuilder.changeMainSkittleIcon(drawable);
-                }else{
-                    skittleBuilder.changeMainSkittleIcon(getResources().getDrawable(R.drawable.up));
-                    up_down = 0;
-                }
-
-
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, AddEvent.class);
+                startActivityForResult(intent, ADD_EVENT_REQUEST);
             }
         });
 
+        final DrawerLayout drawerLayout = (DrawerLayout)findViewById(R.id.drawer);
+        /*Calendar calendar = Calendar.getInstance();
+        int d = calendar.get(Calendar.DAY_OF_MONTH);
+        int m = calendar.get(Calendar.MONTH);
+        String mon = "" + m;
+        String da = "" + d;
+        final EditText month = (EditText) drawerLayout.findViewById(R.id.month);
+        month.setText(mon);
+        final EditText day = (EditText) drawerLayout.findViewById(R.id.day);
+        day.setText(da);*/
+        final EditText radius = (EditText)drawerLayout.findViewById(R.id.rad);
+
+        CheckBox enviro = (CheckBox) drawerLayout.findViewById(R.id.checkbox_enviro);
+        CheckBox rec = (CheckBox) drawerLayout.findViewById(R.id.checkbox_rec);
+        CheckBox arts = (CheckBox) drawerLayout.findViewById(R.id.checkbox_arts);
+        CheckBox animals = (CheckBox) drawerLayout.findViewById(R.id.checkbox_animals);
+        CheckBox social = (CheckBox) drawerLayout.findViewById(R.id.checkbox_social);
+        enviro.setChecked(filter.filter_categories.get("Environmental"));
+        rec.setChecked(filter.filter_categories.get("Recreation"));
+        arts.setChecked(filter.filter_categories.get("Arts"));
+        animals.setChecked(filter.filter_categories.get("Environmental"));
+        social.setChecked(filter.filter_categories.get("Environmental"));
+
+
+        Button saveButton = (Button) drawerLayout.findViewById(R.id.save);
+        saveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                filter.setRadius(radius.getText().toString());
+                filter_checkboxes(drawerLayout);
+
+                List_Fragment list = (List_Fragment) getSupportFragmentManager().findFragmentByTag("tab1");
+                Map_Fragment map = (Map_Fragment) getSupportFragmentManager().findFragmentByTag("tab2");
+                if(list != null) {
+                    list.applyFilters(filter);
+                }
+                if(map !=null){
+
+                }
+                drawerLayout.closeDrawers();
+            }
+        });
 
     }
 
-
-    public void filter_checkboxes( Dialog dialog){
+    public void filter_checkboxes( DrawerLayout dialog){
         CheckBox enviro = (CheckBox) dialog.findViewById(R.id.checkbox_enviro);
         CheckBox rec = (CheckBox) dialog.findViewById(R.id.checkbox_rec);
         CheckBox arts = (CheckBox) dialog.findViewById(R.id.checkbox_arts);
@@ -276,7 +238,9 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(MainActivity.this, "Unable to access Sqlite database.", Toast.LENGTH_SHORT).show();
             }
             else{
-                event.setId((int)eventID);
+                int id = eventGardenDatabase.getId(event);
+                Log.i("setting id",id+" ");
+                event.setId(id);
             }
 
             // Todo This is a debug statement for the sql database.
@@ -308,7 +272,7 @@ public class MainActivity extends AppCompatActivity {
             List_Fragment list =(List_Fragment)getSupportFragmentManager().findFragmentByTag("tab1");
             Map_Fragment map =(Map_Fragment)getSupportFragmentManager().findFragmentByTag("tab2");
             if(map != null){ //add markers to array?
-                map.addMarker(event);
+                //map.addMarker(event);
             }
             list.addtoAdapt(event);
 
@@ -329,12 +293,49 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.search:
 
+                searchView.openSearch();
+                ArrayList<String> eventNames = new ArrayList<String>();
+                ArrayList<Event> allEvents = eventGardenDatabase.getAllEvents();
+                for (Event e : allEvents) {
+                    eventNames.add(e.event_name);
+                }
+                searchView.addSuggestions(eventNames);
+
+                searchView.setOnQueryTextListener(new OnQueryTextListener() {
+                    @Override
+                    public boolean onQueryTextSubmit(String query) {
+                        Intent intent = new Intent(MainActivity.this,EventPage.class);
+                        startActivity(intent);
+
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onQueryTextChange(String newText) {
+                        return false;
+                    }
+                });
+
                 return true;
             case R.id.profile:
-
+                Intent i = new Intent(MainActivity.this ,Profile.class );
+                startActivity(i);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    public Filter getFilter(){
+        return filter;
+    }
+
+    public void onBackPressed() {
+        if (searchView.isOpen()) {
+            // Close the search on the back button press.
+            searchView.closeSearch();
+        } else {
+            super.onBackPressed();
         }
     }
 

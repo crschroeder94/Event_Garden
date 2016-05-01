@@ -28,6 +28,8 @@ dependencies {
     compile 'com.github.medyo:fancybuttons:1.7'
     compile 'com.mikepenz:iconics-core:2.5.11@aar'
     compile 'com.mikepenz:fontawesome-typeface:4.6.0.1@aar'
+    compile 'com.google.maps.android:android-maps-utils:0.3+'
     compile 'com.rlj.library:skittles:4.1.1'
+    compile 'br.com.mauker.materialsearchview:materialsearchview:1.0.3'
 
 }

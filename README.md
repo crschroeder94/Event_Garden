@@ -11,6 +11,7 @@ KNOWN ISSUES:
   - Map makers are are destroyed and created again on switching from/to the map tab
   - It would probably be a good idea to create a database class that stores all the events to fake the database hookup.
   - Address validation should be in the create event page as well.
+  - In search, app crashes after searching. Event name is not passed in.
 
 
 Class rundown:

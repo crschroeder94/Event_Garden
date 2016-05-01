@@ -15,7 +15,7 @@ import android.widget.TextView;
  * Created by Christine Schroeder on 4/9/2016.
  */
 public class Profile extends AppCompatActivity {
-    Button seeEvents;
+    mehdi.sakout.fancybuttons.FancyButton seeEvents;
     TextView desc;
     TextView eventsHosted;
     TextView name;
@@ -33,7 +33,7 @@ public class Profile extends AppCompatActivity {
 
         eventsHosted = (TextView) findViewById(R.id.eventsHosted);
         desc = (TextView) findViewById(R.id.desc);
-        seeEvents = (Button) findViewById(R.id.seeEvents);
+        seeEvents = (mehdi.sakout.fancybuttons.FancyButton) findViewById(R.id.seeEvents);
         name = (TextView) findViewById(R.id.profileName);
 
         seeEvents.setOnClickListener(new View.OnClickListener() {

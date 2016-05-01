@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:fancy="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -16,26 +17,21 @@
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAlignment="center"
-        android:text="My Profile"
-        android:textColor="@android:color/holo_green_dark"
-        android:textSize="30sp"/>
+
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_marginLeft="5dp">
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="20dp">
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
             android:src="@drawable/prof_pic"
-            android:background="@android:color/black"
+            android:background="@color/dark_blue"
             android:padding="2.5dp"/>
 
         <LinearLayout
@@ -48,10 +44,11 @@
             <TextView
                 android:layout_width="200dp"
                 android:layout_height="wrap_content"
-                android:text="Brandon Weber"
+                android:text="EventPlanner1"
                 android:id="@+id/profileName"
                 android:textSize="24sp"
-                android:textColor="@android:color/black"/>
+                android:textStyle="bold"
+                android:textColor="@color/dark_blue"/>
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -64,7 +61,7 @@
                     android:layout_height="wrap_content"
                     android:text="Events Hosted: "
                     android:textSize="18sp"
-                    android:textColor="@android:color/black"/>
+                    />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -72,21 +69,33 @@
                     android:text="4"
                     android:id="@+id/eventsHosted"
                     android:textSize="18sp"
-                    android:textColor="@android:color/black"/>
+                    />
 
             </LinearLayout>
 
-            <Button
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:background="@android:color/holo_green_dark"
-                android:text="See Events"
-                android:textColor="@android:color/black"
+                android:text="Member since: 4/19/2016"
+                android:textSize="18sp"/>
+
+            <mehdi.sakout.fancybuttons.FancyButton
                 android:id="@+id/seeEvents"
-                android:layout_marginLeft="28dp"
-                android:textAllCaps="false"
-                android:textSize="14sp"/>
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:paddingBottom="10dp"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:paddingTop="10dp"
+                fancy:fb_borderColor="#FFFFFF"
+                fancy:fb_borderWidth="1dp"
+                fancy:fb_defaultColor="@color/colorAccent"
+                fancy:fb_focusColor="@color/dark_blue"
+                fancy:fb_radius="30dp"
+                fancy:fb_text="SEE PAST EVENTS"
+                fancy:fb_textColor="#FFFFFF"
+                />
 
         </LinearLayout>
 
@@ -104,7 +113,7 @@
             android:textAlignment="center"
             android:text="Description"
             android:textSize="24sp"
-            android:textColor="@android:color/black" />
+            android:textColor="@color/dark_blue"/>
 
         <TextView
             android:layout_width="match_parent"
@@ -112,14 +121,14 @@
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
             android:id="@+id/desc"
-            android:text="My name is Brandon, and I am a student at the University of Maryland! This page is used to plan and organize events for Cru!"
-            android:textColor="@android:color/black"/>
+            android:text="My name is EventPlanner1, and I am a student at the University of Maryland! This page is used to plan and organize events for Cru!"
+            />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Reputation"
-            android:textColor="@android:color/black"
+            android:textColor="@color/dark_blue"
             android:textAlignment="center"
             android:textSize="24sp"
             android:layout_marginTop="15dp"/>

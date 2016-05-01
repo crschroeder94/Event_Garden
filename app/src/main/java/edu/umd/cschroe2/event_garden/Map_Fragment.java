@@ -33,6 +33,7 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.maps.android.SphericalUtil;
 
 import java.io.IOException;
 import java.util.List;
@@ -41,12 +42,17 @@ import java.util.ArrayList;
 /**
  * Created by Christine Schroeder on 4/8/2016.
  */
-public class Map_Fragment extends Fragment{
+public class Map_Fragment extends Fragment implements LocationListener{
 
     MapView mapView;
     GoogleMap map;
     Geocoder coder;
     ArrayList<EventMarker> eventMarkers = new ArrayList<EventMarker>();
+    int filter_distance;
+    LocationManager mlocationManager;
+    DatabaseHelper databaseHelper;
+    private Location mLastLocationReading;
+    LocationListener mlocationListener = this;
 
     @Override
     public void onCreate(Bundle saved){
@@ -54,19 +60,32 @@ public class Map_Fragment extends Fragment{
         setRetainInstance(true);
         // Setup coder, which is used to get Lat/Long for addresses.
         coder = new Geocoder(this.getContext());
-        DatabaseHelper databaseHelper = DatabaseHelper.getInstance(this.getContext().getApplicationContext());
+        databaseHelper = DatabaseHelper.getInstance(this.getContext().getApplicationContext());
+        filter_distance =  getArguments().getInt("Filter_distance");
         ArrayList<Event> events = databaseHelper.getAllEvents();
-        for (Event event : events) {
-            addMarker(event, false);
+
+
+        //http://stackoverflow.com/questions/24320989/locationmanager-locationmanager-this-getsystemservicecontext-location-servi
+        mlocationManager = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
+        try {
+            mlocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, mlocationListener);
+            //LatLng curr = new LatLng(mLastLocationReading.getLatitude(),mLastLocationReading.getLongitude());
+
+                for (Event event : events) {
+                    addMarker(event, false);
+                }
+
+        }catch(SecurityException e){
+            e.printStackTrace();
         }
+
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, final Bundle savedInstanceState) {
         // Note: This method is called every time the map tab is switched to.
 
         View v = inflater.inflate(R.layout.map, container, false);
-
 
 
         // Gets the MapView from the XML layout and creates it
@@ -79,9 +98,13 @@ public class Map_Fragment extends Fragment{
         u.setZoomControlsEnabled(false);
         //map.getUiSettings().setMyLocationButtonEnabled(false);
         map.setMyLocationEnabled(true);
-        for (EventMarker eventMarker : eventMarkers){
-            map.addMarker(eventMarker.markerOptions);
-        }
+
+
+        //for (EventMarker eventMarker : eventMarkers) {
+        //    map.addMarker(eventMarker.markerOptions);
+        //}
+
+
 
         // Needs to call MapsInitializer before doing any CameraUpdateFactory calls
         try {
@@ -91,61 +114,16 @@ public class Map_Fragment extends Fragment{
             e.printStackTrace();
         }
 
-        //http://stackoverflow.com/questions/24320989/locationmanager-locationmanager-this-getsystemservicecontext-location-servi
-        // Acquire a reference to the system Location Manager
-        final LocationManager locationManager = (LocationManager)getContext().getSystemService(Context.LOCATION_SERVICE);
-        // Define a listener that responds to location updates
-        LocationListener locationListener = new LocationListener() {
-            public void onLocationChanged(Location location) {
-                // Called when a new location is found by the network location provider.
-                CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 10);
-                map.animateCamera(cameraUpdate);
-            }
+          /* LatLng event_location = eventMarker.markerOptions.getPosition();
+             double meters = SphericalUtil.computeDistanceBetween(curr_location, event_location);
+             double miles = meters * 0.00062;
+             filter_distance = 10;
+             Log.i("distance vars", miles+" ");
+             if(miles <= filter_distance) {
+               map.addMarker(eventMarker.markerOptions);
+             }
 
-            public void onStatusChanged(String provider, int status, Bundle extras) {}
-
-            public void onProviderEnabled(String provider) {
-                //Log.i("provider enabled","provider is enabled");
-                try{
-                    locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
-                }catch(SecurityException e){
-                    e.printStackTrace();
-                }
-            }
-
-            public void onProviderDisabled(String provider) {
-                //Log.i("Please turn on GPS","Please turn on GPS");
-                Toast.makeText(getContext(), "Please turn on GPS", Toast.LENGTH_LONG).show();
-                Intent myIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                startActivity(myIntent);
-            }
-        };
-
-        /*Criteria locationCritera = new Criteria();
-        locationCritera.setAccuracy(Criteria.ACCURACY_COARSE);
-        locationCritera.setAltitudeRequired(false);
-        locationCritera.setBearingRequired(false);
-        locationCritera.setCostAllowed(true);
-        locationCritera.setPowerRequirement(Criteria.NO_REQUIREMENT);
-
-        String providerName = locationManager.getBestProvider(locationCritera, true);
-
-        if (providerName != null && locationManager.isProviderEnabled(providerName)) {*/
-        if ( locationManager.isProviderEnabled( LocationManager.GPS_PROVIDER ) ) {
-            // Register the listener with the Location Manager to receive location updates
-            Log.i("provider enabled","provider is enabled");
-            try{
-                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
-            }catch(SecurityException e){
-                e.printStackTrace();
-            }
-        } else {
-            try{
-            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
-            }catch(SecurityException e){
-                e.printStackTrace();
-            }
-        }
+           */
 
         return v;
     }
@@ -168,6 +146,8 @@ public class Map_Fragment extends Fragment{
                 // Create event marker and add it to the list of markers, as well as add it to the map.
                 EventMarker newMarker = new EventMarker(event,new MarkerOptions().position(new LatLng(latitude, longitude)).title(event.event_name));
                 eventMarkers.add(newMarker);
+
+
                 if (render) {
 
                     // Zoom in on the created event.
@@ -203,6 +183,41 @@ public class Map_Fragment extends Fragment{
         super.onLowMemory();
         mapView.onLowMemory();
     }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        LatLng curr_location = new LatLng(location.getLatitude(), location.getLongitude());
+        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 10);
+        map.animateCamera(cameraUpdate);
+        mLastLocationReading = location;
+        for (EventMarker eventMarker : eventMarkers) {
+
+            double meters = SphericalUtil.computeDistanceBetween(curr_location, eventMarker.markerOptions.getPosition());
+            double miles = meters * 0.00062;
+            if(miles <= filter_distance) {
+                map.addMarker(eventMarker.markerOptions);
+            }
+        }
+
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
+        Toast.makeText(getContext(), "Please turn on GPS", Toast.LENGTH_LONG).show();
+        Intent myIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+        startActivity(myIntent);
+    }
+
+    @Override
+    public void onProviderEnabled(String provider) {
+        // not implemented
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+        // not implemented
+    }
+
 
     /**
      * TODO Replace TabHost? We just need the fragment to call "show()/hide()" instead of "replace()"
