@@ -36,13 +36,14 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.maps.android.SphericalUtil;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
 
 /**
  * Created by Christine Schroeder on 4/8/2016.
  */
-public class Map_Fragment extends Fragment implements LocationListener{
+public class Map_Fragment extends Fragment implements LocationListener, GoogleMap.OnMarkerClickListener{
 
     MapView mapView;
     GoogleMap map;
@@ -53,6 +54,7 @@ public class Map_Fragment extends Fragment implements LocationListener{
     DatabaseHelper databaseHelper;
     private Location mLastLocationReading;
     LocationListener mlocationListener = this;
+    HashMap<Marker, EventMarker> markerHashMap = new HashMap<Marker, EventMarker>();
 
     @Override
     public void onCreate(Bundle saved){
@@ -98,7 +100,7 @@ public class Map_Fragment extends Fragment implements LocationListener{
         u.setZoomControlsEnabled(false);
         //map.getUiSettings().setMyLocationButtonEnabled(false);
         map.setMyLocationEnabled(true);
-
+        map.setOnMarkerClickListener(this);
 
         //for (EventMarker eventMarker : eventMarkers) {
         //    map.addMarker(eventMarker.markerOptions);
@@ -149,7 +151,6 @@ public class Map_Fragment extends Fragment implements LocationListener{
 
 
                 if (render) {
-
                     // Zoom in on the created event.
                     CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(new LatLng(latitude, longitude), 10);
                     map.animateCamera(cameraUpdate);
@@ -195,7 +196,8 @@ public class Map_Fragment extends Fragment implements LocationListener{
             double meters = SphericalUtil.computeDistanceBetween(curr_location, eventMarker.markerOptions.getPosition());
             double miles = meters * 0.00062;
             if(miles <= filter_distance) {
-                map.addMarker(eventMarker.markerOptions);
+                // Add marker to map and associate map marker with EventMarker class.
+                markerHashMap.put(map.addMarker(eventMarker.markerOptions), eventMarker);
             }
         }
 
@@ -216,6 +218,18 @@ public class Map_Fragment extends Fragment implements LocationListener{
     @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {
         // not implemented
+    }
+
+    @Override
+    public boolean onMarkerClick(Marker marker) {
+        EventMarker eventMarker = markerHashMap.get(marker);
+        if (eventMarker != null) {
+            Intent i = new Intent(this.getActivity(), EventPage.class);
+            i.putExtra("event", eventMarker.event);
+            this.startActivity(i);
+            return true;
+        }
+        return false;
     }
 
 
