@@ -4,12 +4,15 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+
+import java.util.ArrayList;
 
 /**
  * Created by Christine Schroeder on 4/9/2016.
@@ -23,6 +26,7 @@ public class Profile extends AppCompatActivity {
     String description;
     int reputation;
     int numEvents;
+    DatabaseHelper eventGardenDatabase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +34,7 @@ public class Profile extends AppCompatActivity {
         setContentView(R.layout.profile);
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
+        eventGardenDatabase = DatabaseHelper.getInstance(this);
 
         eventsHosted = (TextView) findViewById(R.id.eventsHosted);
         desc = (TextView) findViewById(R.id.desc);
@@ -43,6 +48,13 @@ public class Profile extends AppCompatActivity {
                 startActivity(i);
             }
         });
+
+        // TODO DEBUG FOR GET EVENTS FROM PROFILE
+        ArrayList<Event> eventsArrayList = eventGardenDatabase.getAllEventsForProfile(1);
+        for (Event e : eventsArrayList){
+            Log.d("EventsForProfile Output", e.event_name);
+        }
+        // TODO END DEBUG
     }
 
     @Override

@@ -233,7 +233,7 @@ public class MainActivity extends AppCompatActivity {
 
             //add event object to SQL database
             Event event = (Event) i.getSerializableExtra("event");
-            long eventID = eventGardenDatabase.insertEvent(event);
+            long eventID = eventGardenDatabase.insertEvent(event,1);
             if (eventID == -1){
                 Toast.makeText(MainActivity.this, "Unable to access Sqlite database.", Toast.LENGTH_SHORT).show();
             }

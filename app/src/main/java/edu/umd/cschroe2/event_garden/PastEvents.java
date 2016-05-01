@@ -39,6 +39,5 @@ public class PastEvents extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.past_events);
-
     }
 }
