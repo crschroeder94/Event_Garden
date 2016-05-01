@@ -67,7 +67,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 
         db.execSQL("CREATE TABLE IF NOT EXISTS Events ("
-                + "id INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + "id INTEGER PRIMARY KEY,"
                 + "event_name VARCHAR(30) NOT NULL,"
                 + "event_date DATE,"
                 + "event_time VARCHAR(20),"
@@ -83,7 +83,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         // Create Table of all equipment logs.
         db.execSQL("CREATE TABLE IF NOT EXISTS Equipment ("
-                + "id INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + "id INTEGER PRIMARY KEY,"
                 + "equipment_name VARCHAR(30) NOT NULL,"
                 + "equipment_quantity INTEGER,"
                 + "equipment_remaining INTEGER DEFAULT 0"
@@ -97,7 +97,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + ")");
 
         db.execSQL("CREATE TABLE IF NOT EXISTS Profiles ("
-                +"id INTEGER PRIMARY KEY AUTOINCREMENT,"
+                +"id INTEGER PRIMARY KEY,"
                 + "description VARCHAR(50),"
                 +"reputation INTEGER DEFAULT 0"
                 + ")");
@@ -242,6 +242,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                                  equipmentMap,
                                  categories);
             e.attending = eventCursor.getInt(eventCursor.getColumnIndex("attending")) > 0;
+            e.id = eventCursor.getInt(eventCursor.getColumnIndex("id"));
 
             retArray.add(e);
         }
@@ -249,26 +250,25 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return retArray;
     }
 
-    public void attendunattendEvent(int id, boolean attend){
+    public void changeAttendance(int id, boolean attend){
         sqLiteDatabase.beginTransaction();
+
         ContentValues eventContentValues = new ContentValues();
-        eventContentValues.put("attending", attend);
-        long eventID = sqLiteDatabase.update("Events", eventContentValues, "id="+id,null);
-        //boolean insertSuccess = (eventID != -1);
-        if (eventID == -1){
-            Log.i("Attending","not sucessful");
+        eventContentValues.put("attending", (attend? 1 : 0));
+        long rowsUpdated = sqLiteDatabase.update("Events", eventContentValues, "id="+id,null);
+
+        if (rowsUpdated == 0){
             sqLiteDatabase.endTransaction();
         }else{
-            Log.i("attending", "successful");
+            sqLiteDatabase.setTransactionSuccessful();
+            sqLiteDatabase.endTransaction();
         }
-        //sqLiteDatabase.rawQuery("UPDATE Events set attending=\""+attend+"\" WHERE id="+id+";", null);
     }
 
-    public boolean checkifAttending(int id){
-        Cursor equipCursor = sqLiteDatabase.rawQuery("SELECT attending FROM Events WHERE id="+id+";", null);
+    public boolean checkIfAttending(int id){
+        Cursor equipCursor = sqLiteDatabase.rawQuery("SELECT * FROM Events WHERE id="+id+";", null);
         while (equipCursor.moveToNext()) {
-            //Log.i("check if attending", equipCursor.getString(equipCursor.getColumnIndex("attending")));
-            return Boolean.parseBoolean(equipCursor.getString(equipCursor.getColumnIndex("attending")));
+            return equipCursor.getInt(equipCursor.getColumnIndex("attending")) > 0;
         }
         equipCursor.close();
         return false;
