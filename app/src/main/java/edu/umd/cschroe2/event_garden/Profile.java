@@ -35,6 +35,8 @@ public class Profile extends AppCompatActivity {
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
         eventGardenDatabase = DatabaseHelper.getInstance(this);
+        //String a = getIntent().getStringExtra("name");
+
 
         eventsHosted = (TextView) findViewById(R.id.eventsHosted);
         desc = (TextView) findViewById(R.id.desc);
@@ -48,6 +50,11 @@ public class Profile extends AppCompatActivity {
                 startActivity(i);
             }
         });
+
+        /*if(a.equals("homeless shelter a")){
+            name.setText(a);
+            desc.setText()
+        }*/
 
         // TODO DEBUG FOR GET EVENTS FROM PROFILE
         ArrayList<Event> eventsArrayList = eventGardenDatabase.getAllEventsForProfile(1);

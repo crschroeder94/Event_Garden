@@ -35,6 +35,9 @@ public class EventPage extends AppCompatActivity {
         final DatabaseHelper db = DatabaseHelper.getInstance(this);
 
         final Event event = (Event) getIntent().getSerializableExtra("event");
+        //getIntent().getStringExtra("Org_Name");
+
+        //if(event != null){
 
         TextView name = (TextView) findViewById(R.id.event_name);
         name.setText(event.event_name);

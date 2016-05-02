@@ -176,6 +176,7 @@ public class List_Adapt extends BaseAdapter {
             public void onClick(View v) {
                 Intent i = new Intent(activity, EventPage.class);
                 i.putExtra("event", event);
+                //i.putExtra("String", "String");
                 activity.startActivity(i);
             }
 

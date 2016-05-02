@@ -306,6 +306,8 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public boolean onQueryTextSubmit(String query) {
                         Intent intent = new Intent(MainActivity.this,EventPage.class);
+                        //intent.putExtra("Org_Name","Homeless Shelter");
+
                         startActivity(intent);
 
                         return false;
