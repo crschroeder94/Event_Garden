@@ -47,6 +47,7 @@ public class Profile extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(Profile.this, PastEvents.class);
+                i.putExtra("Events", DatabaseHelper.getInstance(getApplicationContext()).getAllEvents());
                 startActivity(i);
             }
         });

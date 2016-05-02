@@ -25,10 +25,14 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Base64;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -38,6 +42,7 @@ import android.widget.ListView;
 import android.widget.NumberPicker;
 import android.widget.TabHost;
 import android.widget.TabWidget;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.GoogleMap;
@@ -233,7 +238,7 @@ public class MainActivity extends AppCompatActivity {
         if(requestCode == ADD_EVENT_REQUEST && resultCode == RESULT_OK){
 
             //add event object to SQL database
-            Event event = (Event) i.getSerializableExtra("event");
+            final Event event = (Event) i.getSerializableExtra("event");
             long eventID = eventGardenDatabase.insertEvent(event,1);
             if (eventID == -1){
                 Toast.makeText(MainActivity.this, "Unable to access Sqlite database.", Toast.LENGTH_SHORT).show();
@@ -276,8 +281,28 @@ public class MainActivity extends AppCompatActivity {
                 //map.addMarker(event);
             }
             list.addtoAdapt(event);
+            LayoutInflater inflater = getLayoutInflater();
+            View layout = inflater.inflate(R.layout.fancy_toast,
+                    (ViewGroup) findViewById(R.id.toast_layout));
 
+            TextView text = (TextView) layout.findViewById(R.id.text);
+            text.setText("Your event, \'" + event.event_name + ",\' has been added to the list!");
 
+            Button b = (Button) layout.findViewById(R.id.event_page);
+            b.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent i = new Intent(MainActivity.this,EventPage.class);
+                    i.putExtra("event", event);
+                    startActivity(i);
+                }
+            });
+
+            Toast toast = new Toast(getApplicationContext());
+            toast.setGravity(Gravity.CENTER_HORIZONTAL, 0, 50);
+            toast.setDuration(Toast.LENGTH_LONG);
+            toast.setView(layout);
+            toast.show();
         }
     }
     @Override
