@@ -4,13 +4,10 @@ Main emulator for development right now: Nexus 4
 
 
 KNOWN ISSUES:
-  - App will crash if event details are not fully filled out (Time/Date?)
-  - Event names do not display full event name on list view.
   - Map markers have no interactivity
   - Cannot add event based on location on map
   - Map makers are are destroyed and created again on switching from/to the map tab
-  - It would probably be a good idea to create a database class that stores all the events to fake the database hookup.
-  - Address validation should be in the create event page as well.
+  - In search, app crashes after searching. Event name is not passed in.
 
 
 Class rundown:

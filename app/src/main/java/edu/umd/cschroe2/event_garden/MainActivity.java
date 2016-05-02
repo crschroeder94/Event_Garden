@@ -1,6 +1,7 @@
 package edu.umd.cschroe2.event_garden;
 
 import android.app.ActionBar;
+import android.app.Activity;
 import android.app.Dialog;
 import android.app.Fragment;
 import android.app.ListActivity;
@@ -30,6 +31,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -59,6 +61,9 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 
+import br.com.mauker.materialsearchview.MaterialSearchView;
+import br.com.mauker.materialsearchview.MaterialSearchView.OnQueryTextListener;
+
 import snow.skittles.BaseSkittle;
 import snow.skittles.SkittleBuilder;
 import snow.skittles.SkittleLayout;
@@ -67,31 +72,33 @@ import snow.skittles.TextSkittle;
 public class MainActivity extends AppCompatActivity {
 
     int ADD_EVENT_REQUEST=1;
-    FragmentTabHost tabHost;
+    private static FragmentTabHost tabHost;
     public ArrayList<String> attending;
     Filter filter;
     public int filter_distance= 10;
     private ListView mDrawerList;
     private ArrayAdapter<String> drawerAdapter;
-
+    MaterialSearchView searchView;
     public DatabaseHelper eventGardenDatabase;
     //https://github.com/mikepenz/Android-Iconics
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        searchView = (MaterialSearchView) findViewById(R.id.search_view);
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
         //http://stackoverflow.com/questions/12246388/remove-shadow-below-actionbar
         getSupportActionBar().setElevation(0);
         //getSupportActionBar().setIcon(R.drawable.plant_icon);
+
         // Setup database
         eventGardenDatabase = DatabaseHelper.getInstance(this);
         eventGardenDatabase.onCreate(eventGardenDatabase.getWritableDatabase());
         //eventGardenDatabase.onUpgrade(eventGardenDatabase.getWritableDatabase(),0,1);
+
         attending = new ArrayList<String>();
         filter=new Filter();
-
         //https://www.youtube.com/watch?v=QutovPrajXs
         tabHost = (FragmentTabHost) findViewById(R.id.tabhost);
         //tabHost.setup();
@@ -231,8 +238,8 @@ public class MainActivity extends AppCompatActivity {
         if(requestCode == ADD_EVENT_REQUEST && resultCode == RESULT_OK){
 
             //add event object to SQL database
-            final Event event = (Event) i.getSerializableExtra("event");
-            long eventID = eventGardenDatabase.insertEvent(event);
+            Event event = (Event) i.getSerializableExtra("event");
+            long eventID = eventGardenDatabase.insertEvent(event,1);
             if (eventID == -1){
                 Toast.makeText(MainActivity.this, "Unable to access Sqlite database.", Toast.LENGTH_SHORT).show();
             }
@@ -312,6 +319,29 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.search:
 
+                searchView.openSearch();
+                ArrayList<String> eventNames = new ArrayList<String>();
+                ArrayList<Event> allEvents = eventGardenDatabase.getAllEvents();
+                for (Event e : allEvents) {
+                    eventNames.add(e.event_name);
+                }
+                searchView.addSuggestions(eventNames);
+
+                searchView.setOnQueryTextListener(new OnQueryTextListener() {
+                    @Override
+                    public boolean onQueryTextSubmit(String query) {
+                        Intent intent = new Intent(MainActivity.this,EventPage.class);
+                        startActivity(intent);
+
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onQueryTextChange(String newText) {
+                        return false;
+                    }
+                });
+
                 return true;
             case R.id.profile:
                 Intent i = new Intent(MainActivity.this ,Profile.class );
@@ -324,6 +354,19 @@ public class MainActivity extends AppCompatActivity {
 
     public Filter getFilter(){
         return filter;
+    }
+
+    public void onBackPressed() {
+        if (searchView.isOpen()) {
+            // Close the search on the back button press.
+            searchView.closeSearch();
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    public static FragmentTabHost getTabHost(){
+        return tabHost;
     }
 
 }

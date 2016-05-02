@@ -67,7 +67,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 
         db.execSQL("CREATE TABLE IF NOT EXISTS Events ("
-                + "id INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + "id INTEGER PRIMARY KEY,"
                 + "event_name VARCHAR(30) NOT NULL,"
                 + "event_date DATE,"
                 + "event_time VARCHAR(20),"
@@ -83,7 +83,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         // Create Table of all equipment logs.
         db.execSQL("CREATE TABLE IF NOT EXISTS Equipment ("
-                + "id INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + "id INTEGER PRIMARY KEY,"
                 + "equipment_name VARCHAR(30) NOT NULL,"
                 + "equipment_quantity INTEGER,"
                 + "equipment_remaining INTEGER DEFAULT 0"
@@ -97,7 +97,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + ")");
 
         db.execSQL("CREATE TABLE IF NOT EXISTS Profiles ("
-                +"id INTEGER PRIMARY KEY AUTOINCREMENT,"
+                +"id INTEGER PRIMARY KEY,"
                 +"name VARCHAR(20),"
                 + "description VARCHAR(50),"
                 +"reputation INTEGER DEFAULT 0"
@@ -128,9 +128,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * Inserts the given event into the sqldatabase in the "Events" table.
      *
      * @param event The event being added to the SQL table.
+     * @param eventOwnerID profile ID of the event Owner.
      * @return the ID of the event in the SQL table.
      */
-    public long insertEvent(Event event){
+    public long insertEvent(Event event, int eventOwnerID){
 
         long eventID;
 
@@ -153,6 +154,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         eventContentValues.put("Animals", event.hasFilter("Animals"));
         eventContentValues.put("Social", event.hasFilter("Social"));
         eventID = sqLiteDatabase.insert("Events", null, eventContentValues);
+
+        Log.d("New Event ID",""+eventID);
+
         boolean insertSuccess = (eventID != -1);
         if (eventID == -1){
             sqLiteDatabase.endTransaction();
@@ -180,6 +184,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             event_EquipmentContentValues.put("equipment_id", equipmentID);
             insertSuccess = insertSuccess & (sqLiteDatabase.insert("Equipment", null, equipmentContentValues) != -1);
         }
+
+        // Add link to Profile_Event Table
+        ContentValues PELinkContentValues = new ContentValues();
+        PELinkContentValues.put("profile_id", eventOwnerID);
+        PELinkContentValues.put("event_id", eventID);
+
+        insertSuccess = insertSuccess & (sqLiteDatabase.insert("Profile_Event", null, PELinkContentValues) !=-1);
+
 
         // Finish transaction and close the database. http://stackoverflow.com/questions/6951506/database-lock-issue-in-htc-desire/6955195#6955195
         if (insertSuccess) {
@@ -243,6 +255,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                                  equipmentMap,
                                  categories);
             e.attending = eventCursor.getInt(eventCursor.getColumnIndex("attending")) > 0;
+            e.id = eventCursor.getInt(eventCursor.getColumnIndex("id"));
 
             retArray.add(e);
         }
@@ -250,29 +263,98 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return retArray;
     }
 
-    public void attendunattendEvent(int id, boolean attend){
+    /**
+     * Changes the value of attendance for the event with id <code>eventID</code> to <code> attend </code>
+     * @param eventId - ID of event to update
+     * @param attend - New attendance value
+     */
+    public void changeAttendance(int eventId, boolean attend){
         sqLiteDatabase.beginTransaction();
+
         ContentValues eventContentValues = new ContentValues();
-        eventContentValues.put("attending", attend);
-        long eventID = sqLiteDatabase.update("Events", eventContentValues, "id=" + id, null);
-        //boolean insertSuccess = (eventID != -1);
-        if (eventID == -1){
-            Log.i("Attending","not sucessful");
+        eventContentValues.put("attending", (attend ? 1 : 0));
+        long rowsUpdated = sqLiteDatabase.update("Events", eventContentValues, "id="+eventId,null);
+
+        if (rowsUpdated == 0){
             sqLiteDatabase.endTransaction();
         }else{
-            Log.i("attending", "successful");
+            sqLiteDatabase.setTransactionSuccessful();
+            sqLiteDatabase.endTransaction();
         }
-        //sqLiteDatabase.rawQuery("UPDATE Events set attending=\""+attend+"\" WHERE id="+id+";", null);
     }
 
-    public boolean checkifAttending(int id){
-        Cursor equipCursor = sqLiteDatabase.rawQuery("SELECT attending FROM Events WHERE id=" + id + ";", null);
+    /**
+     * Checks the value of Attending in the SQLiteDatabase for the event given by id.
+     * @param eventID
+     * @return true if event is attended, false if not.
+     */
+    public boolean checkIfAttending(int eventID){
+        Cursor equipCursor = sqLiteDatabase.rawQuery("SELECT * FROM Events WHERE id="+eventID+";", null);
+
         while (equipCursor.moveToNext()) {
-            //Log.i("check if attending", equipCursor.getString(equipCursor.getColumnIndex("attending")));
-            return Boolean.parseBoolean(equipCursor.getString(equipCursor.getColumnIndex("attending")));
+            return equipCursor.getInt(equipCursor.getColumnIndex("attending")) > 0;
         }
         equipCursor.close();
         return false;
+    }
+
+    /**
+     * Gathers all the events associated with the given profile
+     * @param profileID
+     * @return ArrayList of Events that are linked to <code>profileID</code>
+     */
+    public ArrayList<Event> getAllEventsForProfile(int profileID){
+        // http://developer.android.com/reference/android/database/sqlite/SQLiteDatabase.html
+        ArrayList<Event> retArray = new ArrayList<Event>();
+
+        Cursor eventCursor = sqLiteDatabase.rawQuery("SELECT * FROM Events e_table WHERE e_table.id IN (SELECT link.event_id FROM Profile_Event link WHERE link.profile_id="+profileID+")", null);
+
+        if (eventCursor.getCount() == 0){
+            Log.d("DatabaseHelper","No events found.");
+        }
+
+            // iterate through the events returned.
+            while (eventCursor.moveToNext()){
+
+            int eventID = eventCursor.getInt(eventCursor.getColumnIndex("id"));
+
+            // Todo Figure out why using the relational table was erroring. (Is it being created correctly?)
+            // Populate Equipment HashMap
+            HashMap<String, Integer> equipmentMap = new HashMap<String, Integer>();
+            Cursor equipCursor = sqLiteDatabase.rawQuery("SELECT * FROM Equipment WHERE id="+eventID+";", null);
+            while (equipCursor.moveToNext()) {
+                equipmentMap.put(equipCursor.getString(equipCursor.getColumnIndex("equipment_name")),
+                        equipCursor.getInt(equipCursor.getColumnIndex("equipment_quantity")));
+            }
+            equipCursor.close();
+
+
+
+            // Populate categories array.
+            ArrayList<String> categories = new ArrayList<String>();
+
+            String[] categoryTypes = {"Environmental", "Recreation", "Arts","Animals","Social"};
+            for (int i=0; i < categoryTypes.length; i++) {
+                if (eventCursor.getInt(eventCursor.getColumnIndex(categoryTypes[i])) > 0) {
+                    categories.add(categoryTypes[i]);
+                }
+            }
+
+            // Create Event.
+            Event e = new Event( eventCursor.getString(eventCursor.getColumnIndex("event_name")),
+                    eventCursor.getString(eventCursor.getColumnIndex("event_date")),
+                    eventCursor.getString(eventCursor.getColumnIndex("event_time")),
+                    eventCursor.getString(eventCursor.getColumnIndex("description")),
+                    eventCursor.getString(eventCursor.getColumnIndex("location")),
+                    equipmentMap,
+                    categories);
+            e.attending = eventCursor.getInt(eventCursor.getColumnIndex("attending")) > 0;
+            e.id = eventCursor.getInt(eventCursor.getColumnIndex("id"));
+
+            retArray.add(e);
+        }
+        eventCursor.close();
+        return retArray;
     }
 
     public ArrayList<String> getAllEquip (int id){
@@ -292,6 +374,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return equip;
     }
 
+    /**
+     * Returns the SQLiteDatabase's id for the event provided. Note that this is based on an equality check for multiple fields of the object, not a direct comparison.
+     * Check is made based on name, time, date, and location.
+     * @param event - Event object.
+     * @return - ID of first event found that matches <code>event</code> in SQLite Database.
+     */
     public int getId(Event event){
         Cursor equipCursor = sqLiteDatabase.rawQuery("SELECT id FROM Events WHERE event_name=\"" + event.event_name + "\" and " +
                 "event_date="+event.date+" and event_time=\"" +event.time+"\" and location=\""+event.location+"\";", null);

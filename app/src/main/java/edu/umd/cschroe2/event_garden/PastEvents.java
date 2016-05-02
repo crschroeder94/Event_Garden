@@ -75,6 +75,7 @@ public class PastEvents extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
@@ -218,6 +219,7 @@ public class PastEvents extends AppCompatActivity {
             tabHost.getTabWidget().getChildAt(tabHost.getCurrentTab()).setBackgroundColor(getResources().getColor(R.color.colorAccent)); //1st tab selected
         else
             tabHost.getTabWidget().getChildAt(tabHost.getCurrentTab()).setBackgroundColor(getResources().getColor(R.color.colorAccent)); //2nd tab selected
+        setContentView(R.layout.past_events);
     }
 
     //http://stackoverflow.com/questions/2736389/how-to-pass-an-object-from-one-activity-to-another-on-android
@@ -228,7 +230,7 @@ public class PastEvents extends AppCompatActivity {
 
             //add event object to SQL database
             Event event = (Event) i.getSerializableExtra("event");
-            long eventID = eventGardenDatabase.insertEvent(event);
+            long eventID = eventGardenDatabase.insertEvent(event,1);
             if (eventID == -1){
                 Toast.makeText(PastEvents.this, "Unable to access Sqlite database.", Toast.LENGTH_SHORT).show();
             }

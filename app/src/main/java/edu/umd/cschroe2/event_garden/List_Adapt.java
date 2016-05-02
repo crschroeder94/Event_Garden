@@ -8,19 +8,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.BaseExpandableListAdapter;
-import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import org.w3c.dom.Text;
-
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -163,32 +155,18 @@ public class List_Adapt extends BaseAdapter {
         //https://github.com/medyo/Fancybuttons
         final mehdi.sakout.fancybuttons.FancyButton attend = (mehdi.sakout.fancybuttons.FancyButton) itemLayout.findViewById(R.id.attend);
 
-        Log.i("check if attending", "id: "+event.id+": "+db.checkifAttending(event.id));
+        Log.i("check if attending", "id: " + event.id + ": " + db.checkIfAttending(event.id));
         changeAttendinglayout(attending_text, attend, event);
         attend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 TextView attending_text = (TextView) itemLayout.findViewById(R.id.attending_text);
-                if(changeAttendinglayout(attending_text, attend, event)){
-                    db.attendunattendEvent(event.id, true);
-                }else{
-                    db.attendunattendEvent(event.id, false);
+                if (db.checkIfAttending(event.id)) {
+                    db.changeAttendance(event.id, false);
+                } else {
+                    db.changeAttendance(event.id, true);
                 }
-                /*if (attend.getText().toString().equals("ATTEND")){
-                    Toast.makeText(mContext, "You are attending "+event.event_name+"!", Toast.LENGTH_SHORT).show();
-                    event.attending=true;
-                    db.attendunattendEvent(event.id, true);
-                    attending_text.setVisibility(View.VISIBLE);
-                    attend.setText("UNATTEND");
-                    //change button color?
-                }else{
-                    event.attending=false;
-                    db.attendunattendEvent(event.id, false);
-                    attending_text.setVisibility(View.GONE);
-                    attend.setText("ATTEND");
-                }*/
-
-
+                changeAttendinglayout(attending_text, attend, event);
             }
         });
 
@@ -196,20 +174,27 @@ public class List_Adapt extends BaseAdapter {
         event_page.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(activity,EventPage.class);
+                Intent i = new Intent(activity, EventPage.class);
                 i.putExtra("event", event);
                 activity.startActivity(i);
             }
 
         });
 
+        final TextView seeOnMap = (TextView) itemLayout.findViewById(R.id.see_on_map);
+        seeOnMap.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                MainActivity.getTabHost().setCurrentTabByTag("tab2");
+            }
+        });
         return itemLayout;
 
     }
 
     public boolean changeAttendinglayout(TextView attending_text,mehdi.sakout.fancybuttons.FancyButton attend, Event event){
 
-        if(db.checkifAttending(event.id)){
+        if(db.checkIfAttending(event.id)){
             event.attending = true;
             attending_text.setVisibility(View.VISIBLE);
             attend.setText("UNATTEND");

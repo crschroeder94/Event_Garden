@@ -78,7 +78,7 @@ public class EventPage extends AppCompatActivity {
 
         final mehdi.sakout.fancybuttons.FancyButton attend = (mehdi.sakout.fancybuttons.FancyButton) findViewById(R.id.attend);
 
-        if(db.checkifAttending(event.id)) {
+        if(db.checkIfAttending(event.id)) {
             attend.setText("UNATTEND");
         }else{
             attend.setText("ATTEND");
@@ -90,10 +90,10 @@ public class EventPage extends AppCompatActivity {
 
                 if(attend.getText().equals("ATTEND")){
                     attend.setText("UNATTEND");
-                    db.attendunattendEvent(event.id, true);
+                    db.changeAttendance(event.id, true);
                 }else{
                     attend.setText("ATTEND");
-                    db.attendunattendEvent(event.id, false);
+                    db.changeAttendance(event.id, false);
                 }
             }
         });
