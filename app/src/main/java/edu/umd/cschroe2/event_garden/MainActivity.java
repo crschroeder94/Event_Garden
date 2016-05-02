@@ -238,7 +238,7 @@ public class MainActivity extends AppCompatActivity {
         if(requestCode == ADD_EVENT_REQUEST && resultCode == RESULT_OK){
 
             //add event object to SQL database
-            Event event = (Event) i.getSerializableExtra("event");
+            final Event event = (Event) i.getSerializableExtra("event");
             long eventID = eventGardenDatabase.insertEvent(event,1);
             if (eventID == -1){
                 Toast.makeText(MainActivity.this, "Unable to access Sqlite database.", Toast.LENGTH_SHORT).show();
