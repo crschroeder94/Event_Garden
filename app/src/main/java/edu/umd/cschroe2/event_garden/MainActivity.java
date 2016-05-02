@@ -1,6 +1,7 @@
 package edu.umd.cschroe2.event_garden;
 
 import android.app.ActionBar;
+import android.app.Activity;
 import android.app.Dialog;
 import android.app.Fragment;
 import android.app.ListActivity;
@@ -66,14 +67,13 @@ import snow.skittles.TextSkittle;
 public class MainActivity extends AppCompatActivity {
 
     int ADD_EVENT_REQUEST=1;
-    FragmentTabHost tabHost;
+    private static FragmentTabHost tabHost;
     public ArrayList<String> attending;
     Filter filter;
     public int filter_distance= 10;
     private ListView mDrawerList;
     private ArrayAdapter<String> drawerAdapter;
     MaterialSearchView searchView;
-
     public DatabaseHelper eventGardenDatabase;
     //https://github.com/mikepenz/Android-Iconics
     @Override
@@ -86,13 +86,14 @@ public class MainActivity extends AppCompatActivity {
         //http://stackoverflow.com/questions/12246388/remove-shadow-below-actionbar
         getSupportActionBar().setElevation(0);
         //getSupportActionBar().setIcon(R.drawable.plant_icon);
+
         // Setup database
         eventGardenDatabase = DatabaseHelper.getInstance(this);
         eventGardenDatabase.onCreate(eventGardenDatabase.getWritableDatabase());
         //eventGardenDatabase.onUpgrade(eventGardenDatabase.getWritableDatabase(),0,1);
+
         attending = new ArrayList<String>();
         filter=new Filter();
-
         //https://www.youtube.com/watch?v=QutovPrajXs
         tabHost = (FragmentTabHost) findViewById(R.id.tabhost);
         //tabHost.setup();
@@ -337,6 +338,10 @@ public class MainActivity extends AppCompatActivity {
         } else {
             super.onBackPressed();
         }
+    }
+
+    public static FragmentTabHost getTabHost(){
+        return tabHost;
     }
 
 }
