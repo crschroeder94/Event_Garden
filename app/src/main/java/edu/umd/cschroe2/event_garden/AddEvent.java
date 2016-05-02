@@ -39,10 +39,17 @@ public class AddEvent extends AppCompatActivity {
 
     private Button date;
     private Button time;
+    private String equipment_list;
+    private String quantity_list;
+    private int equip_count = 0;
     private String date_string;
     private String time_string;
+    private EditText equipment_1;
+    private EditText quantity_1;
     ArrayList<String> filters;
     Geocoder coder;
+
+    private Button add_equip;
 
     private SimpleDateFormat dateFormatter;
 
@@ -75,7 +82,27 @@ public class AddEvent extends AppCompatActivity {
             }
         });
         filters = new ArrayList<String>();
-
+        equipment_1 = (EditText) findViewById(R.id.equip_1);
+        quantity_1 = (EditText) findViewById(R.id.equip_1_quant);
+        add_equip = (Button) findViewById(R.id.add_equip);
+        add_equip.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if ("".equals(equipment_1.getText().toString()) || "".equals(quantity_1.getText().toString())) {
+                    Toast.makeText(getApplicationContext(), "Please fill in the text before adding the equipment.", Toast.LENGTH_SHORT).show();
+                } else {
+                    if (equip_count == 0) {
+                        equipment_list = equipment_1.getText().toString();
+                        quantity_list = quantity_1.getText().toString();
+                    } else {
+                        equipment_list.concat(", " + equipment_1.getText().toString());
+                        quantity_list.concat(", " + quantity_1.getText().toString());
+                    }
+                }
+                equipment_1.setText("");
+                quantity_1.setText("");
+            }
+        });
 
 
         Button create = (Button) findViewById(R.id.create);
@@ -170,25 +197,7 @@ public class AddEvent extends AppCompatActivity {
     }
 
     public HashMap<String,Integer> equipmentAdding(View v){
-        HashMap<String,Integer> temp = new HashMap<String,Integer>();
-        EditText equip1= (EditText) findViewById(R.id.equip_1);
-        EditText equip1_quant= (EditText) findViewById(R.id.equip_1_quant);
-        EditText equip2= (EditText) findViewById(R.id.equip_2);
-        EditText equip2_quant= (EditText) findViewById(R.id.equip_2_quant);
-        EditText equip3= (EditText) findViewById(R.id.equip_3);
-        EditText equip3_quant= (EditText) findViewById(R.id.equip_3_quant);
-        if(!equip1.getText().toString().equals("") && !equip1_quant.getText().toString().equals("")) {
-            temp.put(equip1.getText().toString(), Integer.parseInt(equip1_quant.getText().toString()));
-        }
-        if(!equip2.getText().toString().equals("") && !equip2_quant.getText().toString().equals("")) {
-            temp.put(equip2.getText().toString(), Integer.parseInt(equip2_quant.getText().toString()));
-        }
-        if(!equip3.getText().toString().equals("") && !equip3_quant.getText().toString().equals("")) {
-            temp.put(equip3.getText().toString(), Integer.parseInt(equip3_quant.getText().toString()));
-        }
-
-
-        return temp;
+        return new HashMap<>();
     }
 
     //INSIDE OF FILTERS
