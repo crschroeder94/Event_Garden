@@ -31,6 +31,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -331,6 +332,17 @@ public class MainActivity extends AppCompatActivity {
                 profileNames.add("Habitat for Humanity");
                 profileNames.add("Anacostia Watershed Society");
                 searchView.addSuggestions(profileNames);
+
+                searchView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+                    @Override
+                    public void onItemClick(AdapterView<?> a, View view, int myInt, long myLong) {
+                        //searchView.setQuery((a.getCount()) + " " + myInt, false);
+                        //searchView.setQuery(((a.getItemAtPosition(myInt)).getClass()).toString(),false);
+                        searchView.setQuery("Anacostia Watershed Society", false);
+                    }
+                });
+
                 searchView.setOnQueryTextListener(new OnQueryTextListener() {
                     @Override
                     public boolean onQueryTextSubmit(String query) {
