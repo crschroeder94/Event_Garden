@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 
@@ -27,8 +28,8 @@ public class Equipment_Adapter extends ArrayAdapter<String> {
                 convertView = LayoutInflater.from(getContext()).inflate(R.layout.equipment_checkbox, parent, false);
             }
 
-            //CheckBox equip_check = (CheckBox) convertView.findViewById(R.id.equip_check);
-            //equip_check.setText(equip);
+            CheckBox equip_check = (CheckBox) convertView.findViewById(R.id.equip_check);
+            equip_check.setText(equip);
 
             return convertView;
         }

@@ -94,8 +94,8 @@ public class MainActivity extends AppCompatActivity {
 
         // Setup database
         eventGardenDatabase = DatabaseHelper.getInstance(this);
-        //eventGardenDatabase.onCreate(eventGardenDatabase.getWritableDatabase());
-        eventGardenDatabase.onUpgrade(eventGardenDatabase.getWritableDatabase(),0,1);
+        eventGardenDatabase.onCreate(eventGardenDatabase.getWritableDatabase());
+        //eventGardenDatabase.onUpgrade(eventGardenDatabase.getWritableDatabase(),0,1);
 
         attending = new ArrayList<String>();
         filter=new Filter();
@@ -320,27 +320,33 @@ public class MainActivity extends AppCompatActivity {
             case R.id.search:
 
                 searchView.openSearch();
-                ArrayList<String> eventNames = new ArrayList<String>();
-                ArrayList<Event> allEvents = eventGardenDatabase.getAllEvents();
+                ArrayList<String> profileNames = new ArrayList<String>();
+                /*ArrayList<Event> allEvents = eventGardenDatabase.getAllEvents();
                 for (Event e : allEvents) {
                     eventNames.add(e.event_name);
                 }
                 searchView.addSuggestions(eventNames);
-
+*/
+                profileNames.add("DC Homeless Shelter");
+                profileNames.add("Habitat for Humanity");
+                profileNames.add("Anacostia Watershed Society");
+                searchView.addSuggestions(profileNames);
                 searchView.setOnQueryTextListener(new OnQueryTextListener() {
                     @Override
                     public boolean onQueryTextSubmit(String query) {
-                        Intent intent = new Intent(MainActivity.this,EventPage.class);
-                        //intent.putExtra("Org_Name","Homeless Shelter");
+                        Log.i("Query is ", query);
+                        Intent intent = new Intent(MainActivity.this, Profile.class);
+                        intent.putExtra("org_name", query);
 
                         startActivity(intent);
 
-                        return false;
+                        return true;
                     }
 
                     @Override
                     public boolean onQueryTextChange(String newText) {
-                        return false;
+                        Log.i("newText is ", newText);
+                        return true;
                     }
                 });
 

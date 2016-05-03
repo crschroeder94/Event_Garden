@@ -1,6 +1,7 @@
 package edu.umd.cschroe2.event_garden;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -18,6 +19,8 @@ import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import br.com.mauker.materialsearchview.MaterialSearchView;
 
 /**
  * Created by Christine Schroeder on 4/27/2016.
@@ -72,6 +75,9 @@ public class EventPage extends AppCompatActivity {
 
         ListView equipment_list = (ListView) findViewById(R.id.equip);
         ArrayList<String> equip = db.getAllEquip(event.id);
+        equip.add("trash bags");
+        equip.add("shovels");
+        //Log.i("equip 1",equip.get(0));
         Log.i("equip for id", event.id+"");
         Log.i("equip_size", equip.size()+"");
         Equipment_Adapter equipAdapter =
@@ -120,10 +126,43 @@ public class EventPage extends AppCompatActivity {
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.search:
+                MaterialSearchView searchView = (MaterialSearchView) findViewById(R.id.search_view);
+                searchView.openSearch();
+                ArrayList<String> profileNames = new ArrayList<String>();
+                /*ArrayList<Event> allEvents = eventGardenDatabase.getAllEvents();
+                for (Event e : allEvents) {
+                    eventNames.add(e.event_name);
+                }
+                searchView.addSuggestions(eventNames);
+*/
+                profileNames.add("DC Homeless Shelter");
+                profileNames.add("Habitat for Humanity");
+                profileNames.add("Anacostia Watershed Society");
+                searchView.addSuggestions(profileNames);
+                searchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
+                    @Override
+                    public boolean onQueryTextSubmit(String query) {
+                        Log.i("Query is ", query);
+                        Intent intent = new Intent(EventPage.this, Profile.class);
+                        intent.putExtra("org_name", query);
+
+                        startActivity(intent);
+
+                        return true;
+                    }
+
+                    @Override
+                    public boolean onQueryTextChange(String newText) {
+                        Log.i("newText is ", newText);
+                        return true;
+                    }
+                });
 
                 return true;
-            case R.id.profile:
 
+            case R.id.profile:
+                Intent i = new Intent(EventPage.this ,Profile.class );
+                startActivity(i);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
