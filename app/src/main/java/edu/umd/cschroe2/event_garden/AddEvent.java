@@ -48,6 +48,7 @@ public class AddEvent extends AppCompatActivity {
     private EditText quantity_1;
     ArrayList<String> filters;
     Geocoder coder;
+    HashMap<String, Integer> equipment = new HashMap<>();
 
     private Button add_equip;
 
@@ -91,13 +92,8 @@ public class AddEvent extends AppCompatActivity {
                 if ("".equals(equipment_1.getText().toString()) || "".equals(quantity_1.getText().toString())) {
                     Toast.makeText(getApplicationContext(), "Please fill in the text before adding the equipment.", Toast.LENGTH_SHORT).show();
                 } else {
-                    if (equip_count == 0) {
-                        equipment_list = equipment_1.getText().toString();
-                        quantity_list = quantity_1.getText().toString();
-                    } else {
-                        equipment_list.concat(", " + equipment_1.getText().toString());
-                        quantity_list.concat(", " + quantity_1.getText().toString());
-                    }
+                    equipment.put(equipment_1.getText().toString(),
+                            Integer.parseInt(quantity_1.getText().toString()));
                 }
                 equipment_1.setText("");
                 quantity_1.setText("");
@@ -197,7 +193,7 @@ public class AddEvent extends AppCompatActivity {
     }
 
     public HashMap<String,Integer> equipmentAdding(View v){
-        return new HashMap<>();
+        return equipment;
     }
 
     //INSIDE OF FILTERS

@@ -391,4 +391,31 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return -1;
     }
 
+    public ArrayList<Event> getDummyEvents(){
+        // http://developer.android.com/reference/android/database/sqlite/SQLiteDatabase.html
+        ArrayList<Event> retArray = new ArrayList<Event>();
+
+        // Create Event.
+        Event e = new Event("Stream Clean Up", "04-15-2016", "10:00 AM", "Clean the stream.", "Lake Artemesia College Park, MD 20742",
+                new HashMap<String, Integer>(), new ArrayList<String>());
+        e.attending = true;
+        e.id = 0;
+
+        retArray.add(e);
+
+        Event e2 = new Event("Community Soccer Game", "04-24-2016", "1:00 PM", "Play soccer!", "Ludwig Field College Park, MD 20742",
+                new HashMap<String, Integer>(), new ArrayList<String>());
+        e2.attending = true;
+        e2.id = 1;
+        retArray.add(e2);
+
+        Event e3 = new Event("Feed the Homeless", "05-01-2016", "6:00 PM", "Come make sandwiches to pass out to homeless people.",
+                "Nationals Park Washington, D.C.", new HashMap<String, Integer>(), new ArrayList<String>());
+        e3.attending = true;
+        e3.id = 2;
+        retArray.add(e3);
+
+        return retArray;
+    }
+
 }
