@@ -75,8 +75,8 @@ public class EventPage extends AppCompatActivity {
 
         ListView equipment_list = (ListView) findViewById(R.id.equip);
         ArrayList<String> equip = db.getAllEquip(event.id);
-        equip.add("trash bags");
-        equip.add("shovels");
+        equip.add("Pound of ground beef");
+        equip.add("Bag of tortilla chips");
         //Log.i("equip 1",equip.get(0));
         Log.i("equip for id", event.id+"");
         Log.i("equip_size", equip.size()+"");
